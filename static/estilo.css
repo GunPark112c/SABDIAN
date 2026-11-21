@@ -22,7 +22,14 @@
 
 /* Reset */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html, body { width: 100%; min-height: 100%; font-family: var(--fuente); color: var(--texto); background-color: var(--fondo); }
+html, html,
+body {
+    width: 100%;
+    min-height: 100%;
+    overflow-x: hidden;
+    /* Forzamos Audiowide en todo el documento */
+    font-family: "Audiowide", sans-serif; 
+}
 
 /* Fondo */
 .vl-fondo { position: fixed; inset: 0; z-index: -2; background-color: var(--fondo); }
