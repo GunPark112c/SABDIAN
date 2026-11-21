@@ -2,34 +2,78 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Analizador SABDIAN</title>
-    <style>
-        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; }
-        .file-input { margin: 20px 0; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
-        th { background: #222; }
-        .APROBADO { color: #4caf50; }
-        .SOSPECHOSO_IA { color: #ffeb3b; }
-        .RECHAZADO { color: #f44336; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SABDIAN - Analizador IA</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Analizador de Código IA (Gemini)</h1>
-    <div class="file-input">
-        <input type="file" id="input-carpeta" webkitdirectory directory multiple>
-        <button id="btn-analizar">Analizar Carpeta</button>
-    </div>
+    <!-- Fondo con textura -->
+    <div class="vl-fondo"></div>
+    <div class="vl-fondo-capa"></div>
 
-    <div id="resultados-container" style="display:none;">
-        <h2>Resultados</h2>
-        <table id="tabla-resultados">
-            <thead>
-                <tr><th>Archivo</th><th>Veredicto</th><th>Score IA</th><th>Deuda Técnica</th></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
+    <!-- Cabecera -->
+    <header class="vl-cabecera">
+        <h1 class="vl-cabecera__logo" style="color: var(--texto); font-size: 20px; font-weight: 800; height: auto;">SABDIAN</h1>
+        <div class="vl-cabecera__acciones">
+            <span style="font-size: 13px; color: var(--texto-suave);">Analizador de Código</span>
+        </div>
+    </header>
+
+    <!-- Contenido Principal -->
+    <main class="vl-pagina">
+        <div class="vl-seccion-encabezado">
+            <span class="vl-seccion-encabezado__etiqueta">Análisis Estático + IA</span>
+            <h2 class="vl-seccion-encabezado__titulo">Detecta la Deuda Técnica</h2>
+            <p class="vl-seccion-encabezado__subtitulo">
+                Sube una carpeta de tu proyecto para analizar la calidad, encontrar código sospechoso de IA y evaluar la arquitectura.
+            </p>
+        </div>
+
+        <!-- Zona de Carga -->
+        <div class="vl-docs-tarjeta" style="max-width: 800px; width: 100%; margin: 0 auto;">
+            <div class="vl-docs-tarjeta__cabecera">
+                <span class="vl-docs-tarjeta__etiqueta">Carga de Archivos</span>
+                <h3 class="vl-docs-tarjeta__titulo">Selecciona tu Carpeta</h3>
+            </div>
+            <div class="vl-docs-tarjeta__cuerpo">
+                <div class="vl-docs-zona" id="drop-zone" onclick="document.getElementById('input-carpeta').click()">
+                    <div class="vl-docs-zona__interior">
+                        <span class="vl-docs-zona__icono">📁</span>
+                        <p class="vl-docs-zona__texto">Haz clic para <strong>seleccionar</strong> una carpeta</p>
+                        <p class="vl-docs-zona__pista">o arrastra y suelta aquí</p>
+                    </div>
+                    <input type="file" id="input-carpeta" webkitdirectory directory multiple style="display: none;">
+                </div>
+            </div>
+            <div class="vl-docs-tarjeta__pie">
+                <button id="btn-analizar" class="vl-boton vl-boton--primario" style="width: 100%;">Analizar Carpeta</button>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div id="resultados-container" style="display: none; width: 100%; max-width: 1000px; margin-top: 40px;">
+            <div class="vl-formatos-seccion__cabecera" style="margin-bottom: 20px;">
+                <h3 class="vl-formatos-seccion__titulo">Resultados del Análisis</h3>
+            </div>
+            
+            <div class="vl-admin-tabla-wrapper">
+                <table class="vl-admin-tabla" id="tabla-resultados">
+                    <thead>
+                        <tr>
+                            <th>Archivo</th>
+                            <th>Veredicto</th>
+                            <th>Score IA</th>
+                            <th>Deuda Técnica</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Aquí JavaScript inyectará las filas -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
     <script src="app.js"></script>
 </body>
 </html>
