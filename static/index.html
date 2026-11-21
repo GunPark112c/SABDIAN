@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Analizador SABDIAN</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; padding: 20px; }
+        .file-input { margin: 20px 0; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #333; padding: 10px; text-align: left; }
+        th { background: #222; }
+        .APROBADO { color: #4caf50; }
+        .SOSPECHOSO_IA { color: #ffeb3b; }
+        .RECHAZADO { color: #f44336; }
+    </style>
+</head>
+<body>
+    <h1>Analizador de Código IA (Gemini)</h1>
+    <div class="file-input">
+        <input type="file" id="input-carpeta" webkitdirectory directory multiple>
+        <button id="btn-analizar">Analizar Carpeta</button>
+    </div>
+
+    <div id="resultados-container" style="display:none;">
+        <h2>Resultados</h2>
+        <table id="tabla-resultados">
+            <thead>
+                <tr><th>Archivo</th><th>Veredicto</th><th>Score IA</th><th>Deuda Técnica</th></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
