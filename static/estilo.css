@@ -229,7 +229,7 @@ body.modo-oscuro .SOSPECHOSO_IA { color: #ffd87a !important; }
 body.modo-oscuro .APROBADO_CON_OBSERVACIONES { color: #38bdf8 !important; }
 
 /* ============================================================
-   INTERRUPTOR
+   INTERRUPTOR (Vuelta completa 540° + rebote: arriba 0deg / abajo 180deg)
    ============================================================ */
 .int-contenedor-tema {
   display: flex; align-items: center; justify-content: center; background: transparent;
@@ -260,7 +260,7 @@ body.modo-oscuro .int-contenedor-tema {
 .int-etiqueta-apagado { color: var(--texto-activo); font-weight: 600; text-shadow: var(--sombra-texto); }
 .int-entrada:checked ~ .int-etiqueta-apagado { color: var(--texto-apagado); font-weight: 500; text-shadow: none; }
 .int-entrada:checked ~ .int-etiqueta-encendido { color: var(--texto-activo); font-weight: 600; text-shadow: var(--sombra-texto); }
-.int-selector { --tamano: 120px; position: relative; display: block; width: var(--tamano); height: var(--tamano); flex: none; border-radius: 50%; background: var(--fondo-selector); cursor: pointer; box-shadow: var(--sombra-selector); transition: box-shadow 0.45s ease, transform 0.25s ease, background 0.45s ease; }
+.int-selector { --tamano: 120px; position: relative; display: block; width: var(--tamano); height: var(--tamano); flex: none; border-radius: 50%; background: var(--fondo-selector); cursor: pointer; -webkit-tap-highlight-color: transparent; box-shadow: var(--sombra-selector); transition: box-shadow 0.45s ease, transform 0.25s ease, background 0.45s ease; }
 .int-escenario:active .int-selector { transform: translateY(1px) scale(0.992); box-shadow: var(--sombra-selector-presionado); }
 .int-entrada:focus-visible ~ .int-selector { box-shadow: var(--sombra-selector), 0 0 0 3px rgba(59, 130, 246, 0.45); }
 .int-bisel { position: absolute; inset: 0; border-radius: 50%; background: var(--fondo-bisel); box-shadow: var(--sombra-bisel); transition: background 0.45s ease, box-shadow 0.45s ease; }
@@ -269,11 +269,27 @@ body.modo-oscuro .int-contenedor-tema {
 .int-entrada:checked ~ .int-selector .int-engranaje { transform: rotate(9deg); }
 .int-engranaje::after { content: ""; position: absolute; inset: 8%; border-radius: 50%; background-image: var(--fondo-placa); box-shadow: var(--sombra-placa); transition: background 0.45s ease, box-shadow 0.45s ease; }
 
-/* Palanca apuntando hacia ARRIBA (0deg) y ABAJO (180deg) */
-.int-palanca { position: absolute; left: 50%; top: 50%; width: calc(var(--tamano) * 0.135); height: calc(var(--tamano) * 0.64); margin-left: calc(var(--tamano) * -0.0675); margin-top: calc(var(--tamano) * -0.64); transform-origin: 50% 100%; transform: rotate(0deg); animation: rebote-hacia-arriba 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards; filter: var(--sombra-proyectada-palanca); z-index: 2; }
-.int-entrada:checked ~ .int-selector .int-palanca { animation: rebote-hacia-abajo 0.72s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-@keyframes rebote-hacia-abajo { 0% { transform: rotate(0deg); } 62% { transform: rotate(193deg); } 78% { transform: rotate(173deg); } 90% { transform: rotate(183deg); } 100% { transform: rotate(180deg); } }
-@keyframes rebote-hacia-arriba { 0% { transform: rotate(180deg); } 62% { transform: rotate(-13deg); } 78% { transform: rotate(7deg); } 90% { transform: rotate(-3deg); } 100% { transform: rotate(0deg); } }
+/* Palanca: inicia apuntando ARRIBA (0deg) y gira 540° (1 vuelta + media vuelta) entre ARRIBA y ABAJO */
+.int-palanca { position: absolute; left: 50%; top: 50%; width: calc(var(--tamano) * 0.135); height: calc(var(--tamano) * 0.64); margin-left: calc(var(--tamano) * -0.0675); margin-top: calc(var(--tamano) * -0.64); transform-origin: 50% 100%; transform: rotate(0deg); animation: giro-resorte-a-arriba 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; filter: var(--sombra-proyectada-palanca); z-index: 2; }
+.int-entrada:checked ~ .int-selector .int-palanca { animation: giro-resorte-a-abajo 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+
+/* 0deg -> 540deg (1 vuelta completa + abajo 180deg) con rebote */
+@keyframes giro-resorte-a-abajo {
+  0%   { transform: rotate(0deg); }
+  70%  { transform: rotate(554deg); }
+  84%  { transform: rotate(533deg); }
+  93%  { transform: rotate(543deg); }
+  100% { transform: rotate(540deg); }
+}
+
+/* 540deg -> 1080deg (1 vuelta completa + arriba 0deg) con rebote */
+@keyframes giro-resorte-a-arriba {
+  0%    { transform: rotate(540deg); }
+  70%   { transform: rotate(1094deg); }
+  84%   { transform: rotate(1073deg); }
+  93%   { transform: rotate(1083deg); }
+  100%  { transform: rotate(1080deg); }
+}
 
 .int-cuerpo-palanca { position: absolute; inset: 0; border-radius: 40% 40% 22% 22% / 18% 18% 10% 10%; background: var(--fondo-palanca); box-shadow: var(--sombra-palanca); transition: background 0.45s ease, box-shadow 0.45s ease; }
 .int-tapa { position: absolute; left: 50%; top: calc(var(--tamano) * -0.035); width: calc(var(--tamano) * 0.19); height: calc(var(--tamano) * 0.19); margin-left: calc(var(--tamano) * -0.095); border-radius: 50%; background: var(--fondo-tapa); box-shadow: var(--sombra-tapa); transition: background 0.45s ease, box-shadow 0.45s ease; }
