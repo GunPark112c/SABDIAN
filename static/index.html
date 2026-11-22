@@ -5,17 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SABDIAN - Analizador IA</title>
     
-    <!-- Fuentes de Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <!-- Asegúrate de que este sea el nombre de tu archivo CSS -->
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 
-    <!-- Cabecera -->
     <header class="vl-cabecera">
         <h1 class="vl-cabecera__logo">SABDIAN</h1>
         <div class="vl-cabecera__acciones">
@@ -23,69 +19,74 @@
         </div>
     </header>
 
-    <!-- Contenido Principal -->
+    <!-- Contenedor Principal (Grid) -->
     <main class="vl-pagina">
         
-        <!-- INTERRUPTOR -->
-        <div class="int-contenedor-tema" id="theme-container">
-            <label class="int-escenario">
-                <input type="checkbox" class="int-entrada" id="toggle-modo" aria-label="Modo individual o carpeta" />
-                <span class="int-etiqueta int-etiqueta-apagado">Código Individual</span>
-                <span class="int-selector">
-                    <span class="int-bisel" aria-hidden="true"></span>
-                    <span class="int-engranaje" aria-hidden="true"></span>
-                    <span class="int-palanca" aria-hidden="true">
-                        <span class="int-cuerpo-palanca"></span>
-                        <span class="int-tapa"></span>
+        <!-- Columna Izquierda: Interruptor (Regla de tercios: 1/3) -->
+        <section class="columna-interruptor">
+            <div class="int-contenedor-tema" id="theme-container">
+                <label class="int-escenario">
+                    <input type="checkbox" class="int-entrada" id="toggle-modo" aria-label="Modo individual o carpeta" />
+                    <span class="int-etiqueta int-etiqueta-apagado">Código Individual</span>
+                    <span class="int-selector">
+                        <span class="int-bisel" aria-hidden="true"></span>
+                        <span class="int-engranaje" aria-hidden="true"></span>
+                        <span class="int-palanca" aria-hidden="true">
+                            <span class="int-cuerpo-palanca"></span>
+                            <span class="int-tapa"></span>
+                        </span>
+                        <span class="int-perno" aria-hidden="true"></span>
                     </span>
-                    <span class="int-perno" aria-hidden="true"></span>
-                </span>
-                <span class="int-etiqueta int-etiqueta-encendido">Proyecto (Carpeta)</span>
-            </label>
-        </div>
+                    <span class="int-etiqueta int-etiqueta-encendido">Proyecto (Carpeta)</span>
+                </label>
+            </div>
+        </section>
 
-        <!-- VISTA 1: CÓDIGO INDIVIDUAL -->
-        <div id="vista-individual" class="vista-contenedor">
-            <div class="vl-seccion-encabezado">
-                <h2 class="vl-seccion-encabezado__titulo">Analizar Código</h2>
-                <p class="vl-seccion-encabezado__subtitulo">Pega un bloque de código para evaluar su calidad.</p>
-            </div>
-            <div class="goma-caja">
-                <div class="caja-contenido">
-                    <textarea id="codigo-individual" placeholder="Pega tu código aquí..." class="input-texto"></textarea>
+        <!-- Columna Derecha: Área de Análisis (Regla de tercios: 2/3) -->
+        <section class="columna-analisis">
+            <!-- VISTA 1: CÓDIGO INDIVIDUAL -->
+            <div id="vista-individual" class="vista-contenedor">
+                <div class="vl-seccion-encabezado">
+                    <h2 class="vl-seccion-encabezado__titulo">Analizar Código</h2>
+                    <p class="vl-seccion-encabezado__subtitulo">Pega un bloque de código para evaluar su calidad.</p>
                 </div>
-                <div class="caja-pie">
-                    <button id="btn-analizar-individual" class="goma-boton">Analizar Código</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- VISTA 2: PROYECTO (CARPETA) -->
-        <div id="vista-carpeta" class="vista-contenedor" style="display: none;">
-            <div class="vl-seccion-encabezado">
-                <h2 class="vl-seccion-encabezado__titulo">Analizar Proyecto</h2>
-                <p class="vl-seccion-encabezado__subtitulo">Sube una carpeta completa para un análisis profundo.</p>
-            </div>
-            <div class="goma-caja">
-                <div class="caja-contenido">
-                    <div class="vl-docs-zona" id="drop-zone" onclick="document.getElementById('input-carpeta').click()">
-                        <div class="vl-docs-zona__interior">
-                            <span class="vl-docs-zona__icono">📁</span>
-                            <p class="vl-docs-zona__texto">Haz clic para <strong>seleccionar</strong> una carpeta</p>
-                            <p class="vl-docs-zona__pista">o arrastra y suelta aquí</p>
-                        </div>
-                        <input type="file" id="input-carpeta" webkitdirectory directory multiple style="display: none;">
+                <div class="goma-caja">
+                    <div class="caja-contenido">
+                        <textarea id="codigo-individual" placeholder="Pega tu código aquí..." class="input-texto"></textarea>
+                    </div>
+                    <div class="caja-pie">
+                        <button id="btn-analizar-individual" class="goma-boton">Analizar Código</button>
                     </div>
                 </div>
-                <div class="caja-pie">
-                    <button id="btn-analizar-carpeta" class="goma-boton">Analizar Carpeta</button>
+            </div>
+
+            <!-- VISTA 2: PROYECTO (CARPETA) -->
+            <div id="vista-carpeta" class="vista-contenedor" style="display: none;">
+                <div class="vl-seccion-encabezado">
+                    <h2 class="vl-seccion-encabezado__titulo">Analizar Proyecto</h2>
+                    <p class="vl-seccion-encabezado__subtitulo">Sube una carpeta completa para un análisis profundo.</p>
+                </div>
+                <div class="goma-caja">
+                    <div class="caja-contenido">
+                        <div class="vl-docs-zona" id="drop-zone" onclick="document.getElementById('input-carpeta').click()">
+                            <div class="vl-docs-zona__interior">
+                                <span class="vl-docs-zona__icono">📁</span>
+                                <p class="vl-docs-zona__texto">Haz clic para <strong>seleccionar</strong> una carpeta</p>
+                                <p class="vl-docs-zona__pista">o arrastra y suelta aquí</p>
+                            </div>
+                            <input type="file" id="input-carpeta" webkitdirectory directory multiple style="display: none;">
+                        </div>
+                    </div>
+                    <div class="caja-pie">
+                        <button id="btn-analizar-carpeta" class="goma-boton">Analizar Carpeta</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- RESULTADOS -->
-        <div id="resultados-container" class="vista-contenedor" style="display: none;">
-            <div class="vl-seccion-encabezado">
+        <!-- Resultados (Ocupa todo el ancho, abajo) -->
+        <section id="resultados-container" class="seccion-resultados" style="display: none;">
+            <div class="vl-seccion-encabezado" style="margin-bottom: 20px;">
                 <h3 class="vl-seccion-encabezado__titulo" style="font-size: 24px;">Resultados del Análisis</h3>
             </div>
             
@@ -102,7 +103,7 @@
                     <tbody></tbody>
                 </table>
             </div>
-        </div>
+        </section>
     </main>
 
     <script src="app.js"></script>
