@@ -6,9 +6,10 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Dict
 
-# 1. Nueva importación para Groq
+# Importamos el cliente de Groq
 from groq import Groq
 
+# Importamos las funciones de tu analizador
 from analizador import (
     es_codigo_valido, analizar_calidad_estatica, metricas_textura,
     score_ia_heuristico, calcular_veredicto,
@@ -19,12 +20,11 @@ app = FastAPI()
 # ============================================================
 # CONFIGURACIÓN DE GROQ
 # ============================================================
-# Pega aquí tu API Key de Groq (empieza con gsk_...)
-GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
-# Inicializamos el cliente de Groq
-client = Groq(api_key=GROQ_API_KEY)
+# En Render, la clave vendrá de las variables de entorno.
+# En local, puedes poner tu clave real aquí después de la coma.
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "AQUI_PEGA_TU_API_KEY_LOCAL")
 
-# Modelo recomendado: es rápido y muy bueno para código
+client = Groq(api_key=GROQ_API_KEY)
 MODELO_GROQ = "openai/gpt-oss-120b"
 
 SYSTEM_PROMPT = """
@@ -50,7 +50,6 @@ Devuelve ESTRICTAMENTE un JSON con esta estructura:
 
 def evaluar_semantica_con_ia(codigo_fuente: str) -> dict:
     try:
-        # 2. Nueva forma de llamar a la IA (formato chat)
         respuesta = client.chat.completions.create(
             model=MODELO_GROQ,
             messages=[
@@ -58,21 +57,46 @@ def evaluar_semantica_con_ia(codigo_fuente: str) -> dict:
                 {"role": "user", "content": f"Analiza este código:\n\n{codigo_fuente}"}
             ],
             temperature=0.1,
-            # Forzamos a que la respuesta sea un JSON válido
             response_format={"type": "json_object"}
         )
-        
-        # Extraemos el contenido de la respuesta
         contenido = respuesta.choices[0].message.content
         return json.loads(contenido)
-        
     except Exception as e:
         print(f"❌ ERROR DE GROQ: {e}")
         return {"error": str(e), "deuda_tecnica": "N/A"}
 
 # ============================================================
-# RUTAS DE LA API (Esto se queda igual)
+# RUTAS DE LA API
 # ============================================================
+
+# 1. Ruta para Código Individual (La que usa el Modo Claro)
+class CodigoIn(BaseModel):
+    codigo: str
+
+@app.post("/analizar-individual")
+def analizar_individual(datos: CodigoIn):
+    if not es_codigo_valido(datos.codigo):
+        return {"error": "El texto no parece código válido.", "archivo": "Código Individual"}
+
+    res_est = analizar_calidad_estatica(datos.codigo)
+    textura = metricas_textura(datos.codigo)
+    score_ia, motivos_ia = score_ia_heuristico(res_est, textura, datos.codigo)
+    
+    semantica = evaluar_semantica_con_ia(datos.codigo)
+    time.sleep(1) # Pausa de seguridad
+    
+    nivel, razones = calcular_veredicto(res_est, textura, score_ia, semantica)
+
+    return {
+        "archivo": "Código Individual",
+        "veredicto": nivel,
+        "razones": razones,
+        "score_ia": score_ia,
+        "semantica": semantica,
+    }
+
+
+# 2. Ruta para Carpeta (La que usa el Modo Oscuro)
 class CarpetaIn(BaseModel):
     archivos: Dict[str, str] 
 
@@ -95,12 +119,10 @@ def analizar_carpeta(datos: CarpetaIn):
         textura = metricas_textura(codigo)
         score_ia, motivos_ia = score_ia_heuristico(res_est, textura, codigo)
         
-        # Llamada a Groq
         semantica = evaluar_semantica_con_ia(codigo)
         
-        # 3. Quitamos o reducimos la pausa porque Groq tiene mejor límite (30 RPM)
-        # Con 1 segundo es más que suficiente para no saturar
-        time.sleep(1) 
+        # Pausa de 4 segundos para no saturar la API (límite de 5 RPM en Gemini/Groq)
+        time.sleep(4) 
         
         nivel, razones = calcular_veredicto(res_est, textura, score_ia, semantica)
 
@@ -115,4 +137,7 @@ def analizar_carpeta(datos: CarpetaIn):
 
     return {"resultados": resultados}
 
+# ============================================================
+# SERVIR EL FRONTEND
+# ============================================================
 app.mount("/", StaticFiles(directory="static", html=True), name="static")
