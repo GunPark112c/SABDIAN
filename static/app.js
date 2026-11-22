@@ -6,29 +6,37 @@ const contenedorResultados = document.getElementById("resultados-container");
 const loaderContainer = document.getElementById("loader-container");
 const tbody = document.querySelector("#tabla-resultados tbody");
 
+const contenedorHallazgos = document.getElementById("detalle-hallazgos-container");
+const tituloHallazgos = document.getElementById("titulo-hallazgos");
+const tbodyHallazgos = document.querySelector("#tabla-hallazgos tbody");
+
 // Elementos de la carpeta
 const inputCarpeta = document.getElementById("input-carpeta");
 const dropZone = document.getElementById("drop-zone");
 const zonaCargaTexto = document.getElementById("zona-carga-texto");
 const listaArchivosContainer = document.getElementById("lista-archivos");
 
+function limpiarResultados() {
+    contenedorResultados.style.display = "none";
+    tbody.innerHTML = "";
+    contenedorHallazgos.style.display = "none";
+    tbodyHallazgos.innerHTML = "";
+}
+
 // --- 1. FORZAR ESTADO INICIAL LIMPIO AL CARGAR LA PÁGINA ---
-// Esto evita el "estado fantasma" del navegador (que recuerda los archivos y el checkbox)
 window.addEventListener("load", () => {
-    toggle.checked = false; // Forzar el interruptor a apagado
+    toggle.checked = false;
     document.body.classList.remove("modo-oscuro");
     vistaIndividual.style.display = "flex";
     vistaCarpeta.style.display = "none";
     
-    // Limpiar la caja de texto y la lista de archivos
     document.getElementById("codigo-individual").value = "";
-    inputCarpeta.value = ""; // Limpia los archivos seleccionados
-    zonaCargaTexto.style.display = "flex"; // Muestra el ícono de carpeta de nuevo
+    inputCarpeta.value = "";
+    zonaCargaTexto.style.display = "flex";
     listaArchivosContainer.style.display = "none";
     listaArchivosContainer.innerHTML = "";
     
-    // Ocultar resultados y loader
-    contenedorResultados.style.display = "none";
+    limpiarResultados();
     loaderContainer.style.display = "none";
 });
 
@@ -43,7 +51,7 @@ toggle.addEventListener("change", () => {
         vistaIndividual.style.display = "flex";
         vistaCarpeta.style.display = "none";
     }
-    contenedorResultados.style.display = "none";
+    limpiarResultados();
     loaderContainer.style.display = "none";
 });
 
@@ -53,9 +61,8 @@ inputCarpeta.addEventListener("change", (e) => {
     if (archivos.length > 0) {
         zonaCargaTexto.style.display = "none";
         listaArchivosContainer.style.display = "flex";
-        listaArchivosContainer.innerHTML = ""; // Limpiar lista anterior
+        listaArchivosContainer.innerHTML = "";
 
-        // Mostramos max 5 archivos para no hacer la caja gigante
         archivos.slice(0, 5).forEach(file => {
             const item = document.createElement("div");
             item.className = "archivo-item";
@@ -71,25 +78,139 @@ inputCarpeta.addEventListener("change", (e) => {
     }
 });
 
-// --- 4. FUNCIÓN PARA MOSTRAR RESULTADOS EN LA TABLA ---
+// --- 4. FUNCIONES PARA MOSTRAR RESULTADOS Y HALLAZGOS ---
+function obtenerValor(obj, rutas, porDefecto = "—") {
+    for (const ruta of rutas) {
+        const partes = ruta.split(".");
+        let actual = obj;
+        let ok = true;
+        for (const p of partes) {
+            if (actual && typeof actual === "object" && p in actual && actual[p] !== undefined && actual[p] !== null) {
+                actual = actual[p];
+            } else {
+                ok = false;
+                break;
+            }
+        }
+        if (ok) {
+            if (Array.isArray(actual)) {
+                return actual.length > 0 ? actual.join(" • ") : "Ninguno";
+            }
+            return String(actual);
+        }
+    }
+    return porDefecto;
+}
+
+function mostrarDetalleHallazgos(res) {
+    if (!res) {
+        contenedorHallazgos.style.display = "none";
+        tbodyHallazgos.innerHTML = "";
+        return;
+    }
+
+    contenedorHallazgos.style.display = "block";
+    tituloHallazgos.textContent = `Hallazgos del Analizador — ${res.archivo || "Bloque"}`;
+    tbodyHallazgos.innerHTML = "";
+
+    const filas = [
+        {
+            metrica: "Líneas totales",
+            valor: obtenerValor(res, ["lineas", "estructura.lineas", "metricas.lineas", "estatico.lineas"]),
+            significado: "Cantidad total de líneas del archivo o bloque; ayuda a dimensionar su extensión y modularidad."
+        },
+        {
+            metrica: "Funciones",
+            valor: obtenerValor(res, ["funciones", "estructura.funciones", "metricas.funciones", "estatico.funciones"]),
+            significado: "Número de funciones o métodos detectados en el código."
+        },
+        {
+            metrica: "Complejidad alta",
+            valor: obtenerValor(res, ["complejidad_alta", "complejidad", "estructura.complejidad_alta", "metricas.complejidad_alta"]),
+            significado: "Bloques con muchas ramas o condiciones que suelen ser más difíciles de probar y mantener."
+        },
+        {
+            metrica: "Sin docstring",
+            valor: obtenerValor(res, ["sin_docstring", "higiene.sin_docstring", "metricas.sin_docstring"]),
+            significado: "Funciones o clases sin documentación que explique su propósito, parámetros o retorno."
+        },
+        {
+            metrica: "Sin type hints",
+            valor: obtenerValor(res, ["sin_type_hints", "sin_hints", "higiene.sin_type_hints", "metricas.sin_type_hints"]),
+            significado: "Parámetros o retornos sin anotaciones de tipo, reduciendo claridad y validación estática."
+        },
+        {
+            metrica: "except: pass",
+            valor: obtenerValor(res, ["except_pass", "higiene.except_pass", "metricas.except_pass"]),
+            significado: "Bloques que atrapan errores y los ignoran en silencio, ocultando fallos reales."
+        },
+        {
+            metrica: "Score IA",
+            valor: res.score_ia !== undefined ? `${res.score_ia}/100` : obtenerValor(res, ["ia.score", "score"]),
+            significado: "Nivel estimado de patrones asociados a código generado por IA según el análisis."
+        },
+        {
+            metrica: "Entropía",
+            valor: obtenerValor(res, ["entropia", "ia.entropia", "metricas.entropia"]),
+            significado: "Mide qué tan variada o predecible es la distribución de tokens y caracteres."
+        },
+        {
+            metrica: "Burstiness",
+            valor: obtenerValor(res, ["burstiness", "ia.burstiness", "metricas.burstiness"]),
+            significado: "Mide la variación entre estructuras cortas y largas; el código humano tiende a ser más irregular."
+        },
+        {
+            metrica: "Deuda técnica (LLM)",
+            valor: obtenerValor(res, ["semantica.deuda_tecnica", "deuda_tecnica"]),
+            significado: "Nivel de esfuerzo futuro necesario por atajos, acoplamiento o diseño mejorable."
+        },
+        {
+            metrica: "Razones / Observaciones",
+            valor: obtenerValor(res, ["semantica.observaciones", "observaciones", "razones"]),
+            significado: "Notas puntuales del análisis estático o del LLM sobre calidad, estilo o posibles riesgos."
+        }
+    ];
+
+    filas.forEach(item => {
+        const tr = document.createElement("tr");
+
+        const tdMetrica = document.createElement("td");
+        tdMetrica.textContent = item.metrica;
+
+        const tdValor = document.createElement("td");
+        tdValor.textContent = item.valor;
+        tdValor.style.fontWeight = "700";
+
+        const tdSignificado = document.createElement("td");
+        tdSignificado.textContent = item.significado;
+        tdSignificado.className = "hallazgo-significado";
+
+        tr.append(tdMetrica, tdValor, tdSignificado);
+        tbodyHallazgos.appendChild(tr);
+    });
+}
+
 function mostrarResultados(resultados) {
     contenedorResultados.style.display = "block";
     tbody.innerHTML = "";
 
-    if (resultados.length === 0) {
+    if (!resultados || resultados.length === 0) {
         tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No hay datos para analizar.</td></tr>";
+        mostrarDetalleHallazgos(null);
         return;
     }
 
-    resultados.forEach(res => {
+    resultados.forEach((res, idx) => {
         const tr = document.createElement("tr");
-        
+        tr.style.cursor = "pointer";
+        tr.title = "Haz clic para ver los hallazgos de este archivo abajo";
+
         const tdNombre = document.createElement("td");
         tdNombre.textContent = res.archivo;
         
         const tdVeredicto = document.createElement("td");
-        tdVeredicto.textContent = res.veredicto.replace(/_/g, ' ');
-        tdVeredicto.className = res.veredicto; 
+        tdVeredicto.textContent = (res.veredicto || "").replace(/_/g, ' ');
+        tdVeredicto.className = res.veredicto || ""; 
         
         const tdScore = document.createElement("td");
         tdScore.textContent = res.score_ia + "/100";
@@ -108,9 +229,19 @@ function mostrarResultados(resultados) {
             if (res.semantica && res.semantica.deuda_tecnica === "Baja") tdDeuda.style.color = document.body.classList.contains("modo-oscuro") ? "#4ade80" : "#111111";
         }
 
+        tr.addEventListener("click", () => {
+            tbody.querySelectorAll("tr").forEach(fila => fila.classList.remove("fila-activa"));
+            tr.classList.add("fila-activa");
+            mostrarDetalleHallazgos(res);
+        });
+
+        if (idx === 0) tr.classList.add("fila-activa");
+
         tr.append(tdNombre, tdVeredicto, tdScore, tdDeuda);
         tbody.appendChild(tr);
     });
+
+    mostrarDetalleHallazgos(resultados[0]);
 }
 
 // --- 5. LÓGICA PARA ANALIZAR CÓDIGO INDIVIDUAL ---
@@ -121,8 +252,7 @@ document.getElementById("btn-analizar-individual").addEventListener("click", asy
         return;
     }
 
-    // Mostrar Loader y ocultar resultados viejos
-    contenedorResultados.style.display = "none";
+    limpiarResultados();
     loaderContainer.style.display = "block";
 
     try {
@@ -133,7 +263,6 @@ document.getElementById("btn-analizar-individual").addEventListener("click", asy
         });
         const data = await resp.json();
         
-        // Pequeño delay para que la animación se disfrute
         setTimeout(() => {
             loaderContainer.style.display = "none";
             mostrarResultados([data]);
@@ -153,17 +282,15 @@ document.getElementById("btn-analizar-carpeta").addEventListener("click", async 
         return;
     }
 
-    // Mostrar Loader y ocultar resultados viejos
-    contenedorResultados.style.display = "none";
+    limpiarResultados();
     loaderContainer.style.display = "block";
 
     const payload = { archivos: {} };
     let archivosLeidos = 0;
 
     for (const file of archivos) {
-        // Ignorar carpetas ocultas y basura
         if (file.name.startsWith('.') || file.webkitRelativePath.includes('node_modules') || file.webkitRelativePath.includes('venv') || file.webkitRelativePath.includes('__pycache__')) continue;
-        if (file.size > 100000) continue; // Ignorar archivos > 100KB
+        if (file.size > 100000) continue;
 
         try {
             const texto = await file.text();
@@ -209,7 +336,6 @@ dropZone.addEventListener("drop", async (e) => {
     e.preventDefault();
     dropZone.style.borderColor = "var(--borde-goma)";
     
-    // Verificamos si es una carpeta o archivos individuales
     if (e.dataTransfer.items) {
         const items = Array.from(e.dataTransfer.items);
         if (items.length === 1 && items[0].webkitGetAsEntry && items[0].webkitGetAsEntry().isDirectory) {
@@ -217,14 +343,12 @@ dropZone.addEventListener("drop", async (e) => {
             return;
         }
 
-        // Si son archivos individuales, simulamos la selección
         const archivosSoltados = Array.from(e.dataTransfer.files);
         if (archivosSoltados.length > 0) {
             const dt = new DataTransfer();
             archivosSoltados.forEach(file => dt.items.add(file));
             inputCarpeta.files = dt.files;
             
-            // Disparamos el evento para que aparezca la lista de archivos
             inputCarpeta.dispatchEvent(new Event('change'));
         }
     }
