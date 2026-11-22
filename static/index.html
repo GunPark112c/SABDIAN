@@ -4,68 +4,99 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SABDIAN - Analizador IA</title>
-    <link rel="stylesheet" href="estilo.css">
-        <!-- Fuentes de Google -->
+    
+    <!-- Fuentes de Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <!-- Audiowide para títulos, Inter para texto, Fira Code para código -->
-    <link href="https://fonts.googleapis.com/css2?family=Audiowide&amp;family=Fira+Code:wght@400;600&amp;family=Inter:wght@400;600;800&amp;display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Fondo con textura -->
-    <div class="vl-fondo"></div>
-    <div class="vl-fondo-capa"></div>
 
     <!-- Cabecera -->
     <header class="vl-cabecera">
-        <h1 class="vl-cabecera__logo" style="color: var(--texto); font-size: 20px; font-weight: 800; height: auto;">SABDIAN</h1>
+        <h1 class="vl-cabecera__logo" style="font-size: 20px; font-weight: 800; font-family: 'Audiowide', sans-serif;">SABDIAN</h1>
         <div class="vl-cabecera__acciones">
-            <span style="font-size: 13px; color: var(--texto-suave);">Analizador de Código</span>
+            <span style="font-size: 13px; color: var(--texto-suave); font-family: 'Inter', sans-serif;">Analizador de Código</span>
         </div>
     </header>
 
     <!-- Contenido Principal -->
     <main class="vl-pagina">
-        <div class="vl-seccion-encabezado">
-            <span class="vl-seccion-encabezado__etiqueta">Análisis Estático + IA</span>
-            <h2 class="vl-seccion-encabezado__titulo">Detecta la Deuda Técnica</h2>
-            <p class="vl-seccion-encabezado__subtitulo">
-                Sube una carpeta de tu proyecto para analizar la calidad, encontrar código sospechoso de IA y evaluar la arquitectura.
-            </p>
+        
+        <!-- INTERRUPTOR (Controla el tema y la vista) -->
+        <div class="int-contenedor-tema" id="theme-container">
+            <label class="int-escenario">
+                <input type="checkbox" class="int-entrada" id="toggle-modo" aria-label="Modo individual o carpeta" />
+                <span class="int-etiqueta int-etiqueta-apagado">Código Individual</span>
+                <span class="int-selector">
+                    <span class="int-bisel" aria-hidden="true"></span>
+                    <span class="int-engranaje" aria-hidden="true"></span>
+                    <span class="int-palanca" aria-hidden="true">
+                        <span class="int-cuerpo-palanca"></span>
+                        <span class="int-tapa"></span>
+                    </span>
+                    <span class="int-perno" aria-hidden="true"></span>
+                </span>
+                <span class="int-etiqueta int-etiqueta-encendido">Proyecto (Carpeta)</span>
+            </label>
         </div>
 
-        <!-- Zona de Carga -->
-        <div class="vl-docs-tarjeta" style="max-width: 800px; width: 100%; margin: 0 auto;">
-            <div class="vl-docs-tarjeta__cabecera">
-                <span class="vl-docs-tarjeta__etiqueta">Carga de Archivos</span>
-                <h3 class="vl-docs-tarjeta__titulo">Selecciona tu Carpeta</h3>
+        <!-- VISTA 1: CÓDIGO INDIVIDUAL (Modo Claro) -->
+        <div id="vista-individual" class="vista-activa" style="width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 20px;">
+            <div class="vl-seccion-encabezado">
+                <h2 class="vl-seccion-encabezado__titulo" style="color: #111;">Analizar Código</h2>
+                <p class="vl-seccion-encabezado__subtitulo" style="color: #555;">Pega un bloque de código para evaluar su calidad.</p>
             </div>
-            <div class="vl-docs-tarjeta__cuerpo">
-                <div class="vl-docs-zona" id="drop-zone" onclick="document.getElementById('input-carpeta').click()">
-                    <div class="vl-docs-zona__interior">
-                        <span class="vl-docs-zona__icono">📁</span>
-                        <p class="vl-docs-zona__texto">Haz clic para <strong>seleccionar</strong> una carpeta</p>
-                        <p class="vl-docs-zona__pista">o arrastra y suelta aquí</p>
-                    </div>
-                    <input type="file" id="input-carpeta" webkitdirectory directory multiple style="display: none;">
+            <div class="vl-docs-tarjeta goma-caja" style="background: #fff; border-color: #ccc;">
+                <div class="vl-docs-tarjeta__cuerpo">
+                    <textarea id="codigo-individual" placeholder="Pega tu código aquí..." style="width: 100%; height: 300px; padding: 15px; border-radius: 8px; border: 1px solid #ccc; font-family: monospace; resize: vertical; background: #f9f9f9; color: #111;"></textarea>
+                </div>
+                <div class="vl-docs-tarjeta__pie">
+                    <button id="btn-analizar-individual" class="goma-boton" style="width: 100%;">Analizar Código</button>
                 </div>
             </div>
-            <div class="vl-docs-tarjeta__pie">
-                <button id="btn-analizar" class="vl-boton vl-boton--primario" style="width: 100%;">Analizar Carpeta</button>
+        </div>
+
+        <!-- VISTA 2: PROYECTO (Carpeta) (Modo Oscuro) -->
+        <div id="vista-carpeta" style="width: 100%; max-width: 800px; display: none; flex-direction: column; gap: 20px;">
+            <div class="vl-seccion-encabezado">
+                <h2 class="vl-seccion-encabezado__titulo" style="color: #fff;">Analizar Proyecto</h2>
+                <p class="vl-seccion-encabezado__subtitulo" style="color: #aaa;">Sube una carpeta completa para un análisis profundo.</p>
+            </div>
+            <div class="vl-docs-tarjeta" style="background: #1e2126; border-color: #333;">
+                <div class="vl-docs-tarjeta__cabecera">
+                    <span class="vl-docs-tarjeta__etiqueta" style="color: #4ade80;">Carga de Archivos</span>
+                    <h3 class="vl-docs-tarjeta__titulo" style="color: #fff;">Selecciona tu Carpeta</h3>
+                </div>
+                <div class="vl-docs-tarjeta__cuerpo">
+                    <div class="vl-docs-zona" id="drop-zone" onclick="document.getElementById('input-carpeta').click()" style="border-color: #444; background: #2a2f38; color: #fff;">
+                        <div class="vl-docs-zona__interior">
+                            <span class="vl-docs-zona__icono">📁</span>
+                            <p class="vl-docs-zona__texto">Haz clic para <strong>seleccionar</strong> una carpeta</p>
+                            <p class="vl-docs-zona__pista" style="color: #888;">o arrastra y suelta aquí</p>
+                        </div>
+                        <input type="file" id="input-carpeta" webkitdirectory directory multiple style="display: none;">
+                    </div>
+                </div>
+                <div class="vl-docs-tarjeta__pie">
+                    <button id="btn-analizar-carpeta" class="goma-boton" style="width: 100%; background: #333; color: #fff; border: 1px solid #555;">Analizar Carpeta</button>
+                </div>
             </div>
         </div>
 
-        <!-- Resultados -->
+        <!-- RESULTADOS (Compartidos) -->
         <div id="resultados-container" style="display: none; width: 100%; max-width: 1000px; margin-top: 40px;">
-            <div class="vl-formatos-seccion__cabecera" style="margin-bottom: 20px;">
-                <h3 class="vl-formatos-seccion__titulo">Resultados del Análisis</h3>
+            <div class="vl-seccion-encabezado" style="margin-bottom: 20px;">
+                <h3 class="vl-seccion-encabezado__titulo" style="font-size: 24px; color: inherit;">Resultados del Análisis</h3>
             </div>
             
-            <div class="vl-admin-tabla-wrapper">
-                <table class="vl-admin-tabla" id="tabla-resultados">
+            <div class="vl-admin-tabla-wrapper goma-caja" id="tabla-wrapper" style="background: #fff; border-color: #ccc;">
+                <table class="vl-admin-tabla" id="tabla-resultados" style="color: #111;">
                     <thead>
                         <tr>
-                            <th>Archivo</th>
+                            <th>Archivo / Bloque</th>
                             <th>Veredicto</th>
                             <th>Score IA</th>
                             <th>Deuda Técnica</th>
