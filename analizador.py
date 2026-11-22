@@ -21,9 +21,43 @@ UMBRALES = {
 }
 
 NOMBRES_PROHIBIDOS = {
-    "data", "handle", "process", "temp", "tmp", "foo", "bar", "baz",
-    "thing", "stuff", "manager", "helper", "util", "info", "usr",
-    "msg", "val", "res", "cfg", "btn", "df", "aux", "obj", "item",
+    # --- Genéricos absolutos ---
+    "data", "info", "value", "val", "item", "object", "obj", "element", "elem",
+    "thing", "stuff", "temp", "tmp", "var", "variable", "aux", "auxiliary",
+    
+    # --- Acciones y procesos ---
+    "process", "handle", "execute", "run", "perform", "do", "make", "create",
+    "build", "generate", "calculate", "compute", "evaluate", "check", "validate",
+    "verify", "update", "modify", "change", "set", "get", "fetch", "retrieve",
+    
+    # --- Utilidades y helpers ---
+    "util", "utils", "helper", "helpers", "manager", "controller", "service",
+    "factory", "builder", "handler", "processor", "provider", "wrapper",
+    
+    # --- Resultados y estados ---
+    "result", "res", "output", "out", "input", "inp", "response", "resp",
+    "status", "state", "flag", "is_valid", "is_ready", "success", "error",
+    
+    # --- Comunes en bucles y arrays ---
+    "list", "arr", "array", "collection", "items", "records", "rows", "cols",
+    "index", "idx", "counter", "count", "total", "sum", "max", "min", "avg",
+    
+    # --- Típicos de JS/TS ---
+    "btn", "button", "click", "event", "evt", "e", "el", "element", "node",
+    "div", "span", "input", "form", "field", "modal", "popup", "dialog",
+    "handler", "callback", "cb", "promise", "async", "await", "fetch",
+    
+    # --- Típicos de Python ---
+    "df", "dataframe", "series", "dict", "tuple", "set", "str", "int", "float",
+    "bool", "none", "self", "cls", "args", "kwargs", "config", "cfg",
+    
+    # --- Típicos de Java/C# ---
+    "args", "argv", "main", "test", "demo", "example", "sample", "mock",
+    "user", "usr", "account", "profile", "message", "msg", "text", "content",
+    
+    # --- Palabras de relleno (muy usadas por IA) ---
+    "some", "any", "all", "each", "every", "this", "that", "it", "thing",
+    "foo", "bar", "baz", "qux", "quux", "lorem", "ipsum", "dolor", "amet",
 }
 
 def es_codigo_valido(texto: str) -> bool:
