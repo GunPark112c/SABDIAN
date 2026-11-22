@@ -14,33 +14,18 @@ const contenedorResultados = document.getElementById("resultados-container");
 const tbody = document.querySelector("#tabla-resultados tbody");
 
 // --- Lógica del Interruptor (Tema y Vista) ---
+// --- Lógica del Interruptor (Tema y Vista) ---
 toggle.addEventListener("change", () => {
-    const esModoOscuro = toggle.checked;
-
-    if (esModoOscuro) {
+    if (toggle.checked) {
         // MODO OSCURO (Carpeta)
-        document.body.style.backgroundColor = "#121418";
-        document.body.style.color = "#ffffff";
-        themeContainer.style.backgroundColor = "#1e2126"; // Fondo del interruptor
+        document.body.classList.add("modo-oscuro");
         vistaIndividual.style.display = "none";
         vistaCarpeta.style.display = "flex";
-        
-        // Adaptar tabla a oscuro
-        tablaWrapper.style.background = "#1e2126";
-        tablaWrapper.style.borderColor = "#333";
-        tabla.style.color = "#fff";
     } else {
         // MODO CLARO (Individual)
-        document.body.style.backgroundColor = "#ffffff";
-        document.body.style.color = "#111111";
-        themeContainer.style.backgroundColor = "#ebedf0";
+        document.body.classList.remove("modo-oscuro");
         vistaIndividual.style.display = "flex";
         vistaCarpeta.style.display = "none";
-        
-        // Adaptar tabla a claro
-        tablaWrapper.style.background = "#fff";
-        tablaWrapper.style.borderColor = "#dcdcdc";
-        tabla.style.color = "#111";
     }
     
     // Ocultar resultados anteriores al cambiar de modo
