@@ -1,38 +1,56 @@
-// --- Referencias al DOM ---
 const toggle = document.getElementById("toggle-modo");
-const themeContainer = document.getElementById("theme-container");
 const vistaIndividual = document.getElementById("vista-individual");
 const vistaCarpeta = document.getElementById("vista-carpeta");
-const tablaWrapper = document.getElementById("tabla-wrapper");
-const tabla = document.getElementById("tabla-resultados");
-
-const btnIndividual = document.getElementById("btn-analizar-individual");
-const btnCarpeta = document.getElementById("btn-analizar-carpeta");
-const inputCarpeta = document.getElementById("input-carpeta");
-const dropZone = document.getElementById("drop-zone");
 const contenedorResultados = document.getElementById("resultados-container");
 const tbody = document.querySelector("#tabla-resultados tbody");
+const loaderContainer = document.getElementById("loader-container");
 
-// --- Lógica del Interruptor (Tema y Vista) ---
-// --- Lógica del Interruptor (Tema y Vista) ---
+// Elementos de la carpeta
+const inputCarpeta = document.getElementById("input-carpeta");
+const dropZone = document.getElementById("drop-zone");
+const zonaCargaTexto = document.getElementById("zona-carga-texto");
+const listaArchivosContainer = document.getElementById("lista-archivos");
+
+// --- Lógica del Interruptor ---
 toggle.addEventListener("change", () => {
     if (toggle.checked) {
-        // MODO OSCURO (Carpeta)
         document.body.classList.add("modo-oscuro");
         vistaIndividual.style.display = "none";
         vistaCarpeta.style.display = "flex";
     } else {
-        // MODO CLARO (Individual)
         document.body.classList.remove("modo-oscuro");
         vistaIndividual.style.display = "flex";
         vistaCarpeta.style.display = "none";
     }
-    
-    // Ocultar resultados anteriores al cambiar de modo
     contenedorResultados.style.display = "none";
+    loaderContainer.style.display = "none";
 });
 
-// --- Función para llenar la tabla (Compartida) ---
+// --- Lógica para mostrar los archivos de la carpeta ---
+inputCarpeta.addEventListener("change", (e) => {
+    const archivos = Array.from(e.target.files);
+    if (archivos.length > 0) {
+        zonaCargaTexto.style.display = "none";
+        listaArchivosContainer.style.display = "flex";
+        listaArchivosContainer.innerHTML = ""; // Limpiar lista anterior
+
+        // Mostramos max 5 archivos para no hacer la caja gigante
+        archivos.slice(0, 5).forEach(file => {
+            const item = document.createElement("div");
+            item.className = "archivo-item";
+            item.innerHTML = `<span>📄</span> ${file.name}`;
+            listaArchivosContainer.appendChild(item);
+        });
+        if (archivos.length > 5) {
+            const mas = document.createElement("div");
+            mas.className = "archivo-item archivo-mas";
+            mas.textContent = `... y ${archivos.length - 5} archivos más`;
+            listaArchivosContainer.appendChild(mas);
+        }
+    }
+});
+
+// --- Función para mostrar resultados ---
 function mostrarResultados(resultados) {
     contenedorResultados.style.display = "block";
     tbody.innerHTML = "";
@@ -66,7 +84,7 @@ function mostrarResultados(resultados) {
             tdDeuda.textContent = res.semantica ? (res.semantica.deuda_tecnica || "N/A") : "N/A";
             if (res.semantica && res.semantica.deuda_tecnica === "Alta") tdDeuda.style.color = "#cc0000";
             if (res.semantica && res.semantica.deuda_tecnica === "Media") tdDeuda.style.color = "#cc7700";
-            if (res.semantica && res.semantica.deuda_tecnica === "Baja") tdDeuda.style.color = toggle.checked ? "#4ade80" : "#111111";
+            if (res.semantica && res.semantica.deuda_tecnica === "Baja") tdDeuda.style.color = document.body.classList.contains("modo-oscuro") ? "#4ade80" : "#111111";
         }
 
         tr.append(tdNombre, tdVeredicto, tdScore, tdDeuda);
@@ -75,15 +93,16 @@ function mostrarResultados(resultados) {
 }
 
 // --- Lógica para Código Individual ---
-btnIndividual.addEventListener("click", async () => {
+document.getElementById("btn-analizar-individual").addEventListener("click", async () => {
     const codigo = document.getElementById("codigo-individual").value;
     if (!codigo.trim()) {
         alert("Pega algún código primero.");
         return;
     }
 
-    btnIndividual.disabled = true;
-    btnIndividual.textContent = "Analizando...";
+    // Mostrar Loader
+    contenedorResultados.style.display = "none";
+    loaderContainer.style.display = "block";
 
     try {
         const resp = await fetch("/analizar-individual", {
@@ -93,26 +112,28 @@ btnIndividual.addEventListener("click", async () => {
         });
         const data = await resp.json();
         
-        // El backend devuelve un solo resultado, lo metemos en un array
-        mostrarResultados([data]);
+        setTimeout(() => {
+            loaderContainer.style.display = "none";
+            mostrarResultados([data]);
+        }, 500); // Pequeño delay para que la animación se disfrute
+
     } catch (err) {
+        loaderContainer.style.display = "none";
         alert("Error de red: " + err.message);
-    } finally {
-        btnIndividual.disabled = false;
-        btnIndividual.textContent = "Analizar Código";
     }
 });
 
 // --- Lógica para Carpeta ---
-btnCarpeta.addEventListener("click", async () => {
+document.getElementById("btn-analizar-carpeta").addEventListener("click", async () => {
     const archivos = inputCarpeta.files;
     if (archivos.length === 0) {
         alert("Por favor, selecciona una carpeta primero.");
         return;
     }
 
-    btnCarpeta.disabled = true;
-    btnCarpeta.textContent = "Leyendo archivos...";
+    // Mostrar Loader
+    contenedorResultados.style.display = "none";
+    loaderContainer.style.display = "block";
 
     const payload = { archivos: {} };
     let archivosLeidos = 0;
@@ -130,12 +151,9 @@ btnCarpeta.addEventListener("click", async () => {
 
     if (archivosLeidos === 0) {
         alert("No se encontraron archivos válidos.");
-        btnCarpeta.disabled = false;
-        btnCarpeta.textContent = "Analizar Carpeta";
+        loaderContainer.style.display = "none";
         return;
     }
-
-    btnCarpeta.textContent = `Analizando ${archivosLeidos} archivos...`;
 
     try {
         const resp = await fetch("/analizar-carpeta", {
@@ -144,16 +162,16 @@ btnCarpeta.addEventListener("click", async () => {
             body: JSON.stringify(payload)
         });
         const data = await resp.json();
+        
+        loaderContainer.style.display = "none";
         mostrarResultados(data.resultados);
     } catch (err) {
+        loaderContainer.style.display = "none";
         alert("Error: " + err.message);
-    } finally {
-        btnCarpeta.disabled = false;
-        btnCarpeta.textContent = "Analizar Carpeta";
     }
 });
 
-// --- Drag & Drop visual (solo estética) ---
+// --- Efectos visuales del Drag & Drop ---
 dropZone.addEventListener("dragover", (e) => { e.preventDefault(); dropZone.style.borderColor = "#4ade80"; });
-dropZone.addEventListener("dragleave", (e) => { e.preventDefault(); dropZone.style.borderColor = "#444"; });
-dropZone.addEventListener("drop", (e) => { e.preventDefault(); dropZone.style.borderColor = "#444"; alert("Por favor, usa el clic para seleccionar la carpeta."); });
+dropZone.addEventListener("dragleave", (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--borde-goma)"; });
+dropZone.addEventListener("drop", (e) => { e.preventDefault(); dropZone.style.borderColor = "var(--borde-goma)"; alert("Por favor, usa el clic para seleccionar la carpeta."); });
