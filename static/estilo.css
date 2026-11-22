@@ -209,31 +209,74 @@ body.modo-oscuro .int-contenedor-tema {
 .int-perno::after { content: ""; position: absolute; left: 24%; top: 18%; width: 32%; height: 24%; border-radius: 50%; background: radial-gradient(circle, var(--brillo-perno), rgba(255, 255, 255, 0)); filter: blur(1px); transition: background 0.45s ease; }
 
 /* ============================================================
-   RESPONSIVO (Para móviles y tablets)
+   RESPONSIVO (Ajustes para Tablets y Móviles)
    ============================================================ */
+
+/* Tablets (pantallas medianas) */
 @media (max-width: 900px) {
     .vl-pagina {
-        grid-template-columns: 1fr; /* Una sola columna en pantallas pequeñas */
+        grid-template-columns: 1fr; /* Una sola columna */
         padding-top: 84px;
+        gap: 20px;
     }
+    
     .columna-interruptor {
         grid-column: 1 / -1;
         padding-top: 0;
-        margin-bottom: 20px;
+        margin-bottom: 10px;
     }
+    
     .columna-analisis {
         grid-column: 1 / -1;
     }
+    
     .vl-seccion-encabezado {
         text-align: center;
     }
+}
+
+/* Móviles (pantallas pequeñas) */
+@media (max-width: 600px) {
+    /* 1. Hacer el interruptor más pequeño para que no ocupe toda la pantalla */
     .int-selector {
-        --tamano: 100px; /* Interruptor más pequeño en móvil */
+        --tamano: 80px !important; 
     }
+    
+    /* 2. Apilar el texto del interruptor arriba y abajo (en lugar de izquierda/derecha) */
     .int-escenario {
-        gap: 20px;
+        flex-direction: column;
+        gap: 15px;
     }
+
+    /* 3. Ajustar la tipografía de las etiquetas */
     .int-etiqueta {
-        font-size: 10px;
+        font-size: 9px;
+        letter-spacing: 0.05em;
+    }
+
+    /* 4. Ajustar el área de texto y la tabla para que no se corten */
+    .vl-pagina {
+        padding: 80px 16px 40px;
+    }
+
+    .input-texto {
+        height: 200px;
+        font-size: 14px;
+    }
+
+    .goma-boton {
+        height: 40px;
+        font-size: 13px;
+    }
+
+    /* Hacer que la tabla se pueda deslizar horizontalmente sin romper la pantalla */
+    .vl-admin-tabla-wrapper {
+        border-radius: var(--radio);
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .vl-admin-tabla {
+        min-width: 600px; /* Fuerza a que la tabla sea ancha y se pueda deslizar */
     }
 }
