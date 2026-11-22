@@ -34,7 +34,7 @@ html, body {
     color: var(--texto-principal); 
     background-color: var(--bg-pagina); 
     transition: background-color 0.5s ease, color 0.5s ease;
-    overflow-x: hidden; /* Evita scroll horizontal por accidente */
+    overflow-x: hidden;
 }
 button, input, textarea { font-family: inherit; }
 
@@ -56,8 +56,9 @@ button, input, textarea { font-family: inherit; }
     padding: 104px 24px 64px;
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
     gap: 40px;
+    width: 100%;
     max-width: 1400px;
     margin: 0 auto;
 }
@@ -68,6 +69,8 @@ button, input, textarea { font-family: inherit; }
     justify-content: center;
     align-items: flex-start;
     padding-top: 40px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 .columna-analisis {
@@ -75,13 +78,16 @@ button, input, textarea { font-family: inherit; }
     display: flex;
     flex-direction: column;
     gap: 20px;
-    min-width: 0; /* Evita que los hijos empujen la columna */
+    min-width: 0;
+    max-width: 100%;
 }
 
 /* Resultados */
 .seccion-resultados {
     width: 100%;
     margin-top: 20px;
+    min-width: 0;
+    max-width: 100%;
 }
 
 /* --- Componentes --- */
@@ -90,6 +96,8 @@ button, input, textarea { font-family: inherit; }
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 0;
+    max-width: 100%;
 }
 .vl-seccion-encabezado { text-align: left; border-bottom: 1px solid var(--borde-goma); padding-bottom: 16px; }
 .vl-seccion-encabezado__titulo { font-size: 24px; margin-bottom: 6px; }
@@ -104,9 +112,11 @@ button, input, textarea { font-family: inherit; }
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    min-width: 0;
+    max-width: 100%;
 }
-.caja-contenido { padding: 24px; flex-grow: 1; }
-.caja-pie { padding: 0 24px 24px 24px; }
+.caja-contenido { padding: 24px; flex-grow: 1; min-width: 0; }
+.caja-pie { padding: 0 24px 24px 24px; min-width: 0; }
 
 .goma-boton {
     display: inline-flex; align-items: center; justify-content: center;
@@ -136,12 +146,14 @@ button, input, textarea { font-family: inherit; }
 .vl-docs-zona__pista { font-size: 14px; color: var(--texto-secundario); font-family: 'Inter', sans-serif; }
 
 /* ============================================================
-   TABLA CORREGIDA (El truco está aquí)
+   TABLA CORREGIDA
    ============================================================ */
 .vl-admin-tabla-wrapper { 
     width: 100%; 
-    overflow-x: auto; /* Permite el scroll horizontal */
-    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-radius: var(--radio);
 }
 
@@ -149,7 +161,7 @@ button, input, textarea { font-family: inherit; }
     width: 100%; 
     border-collapse: collapse; 
     font-size: 14px; 
-    min-width: 600px; /* Fuerza un ancho mínimo para que no se aplaste */
+    min-width: 600px;
 }
 
 .vl-admin-tabla thead { background: rgba(0,0,0,0.03); }
@@ -162,7 +174,7 @@ body.modo-oscuro .vl-admin-tabla thead { background: rgba(255,255,255,0.03); }
     text-transform: uppercase; 
     font-size: 11px; 
     border-bottom: 2px solid var(--borde-goma); 
-    white-space: nowrap; /* Evita que los títulos se rompan en varias líneas */
+    white-space: nowrap;
 }
 
 .vl-admin-tabla td { 
@@ -175,9 +187,9 @@ body.modo-oscuro .vl-admin-tabla thead { background: rgba(255,255,255,0.03); }
     font-family: monospace; 
     font-weight: bold; 
     color: var(--texto-principal);
-    max-width: 200px; /* Limita el ancho del nombre del archivo */
+    max-width: 200px;
     overflow: hidden;
-    text-overflow: ellipsis; /* Pone "..." si el nombre es muy largo */
+    text-overflow: ellipsis;
     white-space: nowrap;
 }
 
@@ -246,6 +258,8 @@ body.modo-oscuro .int-contenedor-tema {
 .seccion-info {
     grid-column: 1 / -1;
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
     margin-top: 20px;
     margin-bottom: 20px;
 }
@@ -283,7 +297,7 @@ body.modo-oscuro .int-contenedor-tema {
    ============================================================ */
 @media (max-width: 900px) {
     .vl-pagina {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
         padding-top: 84px;
         gap: 20px;
     }
@@ -294,7 +308,7 @@ body.modo-oscuro .int-contenedor-tema {
     }
     .columna-analisis {
         grid-column: 1 / -1;
-        min-width: auto; /* Importante para que la tabla no fuerce el ancho */
+        min-width: 0;
     }
     .vl-seccion-encabezado {
         text-align: center;
@@ -305,17 +319,22 @@ body.modo-oscuro .int-contenedor-tema {
     .int-selector { --tamano: 80px !important; }
     .int-escenario { flex-direction: column; gap: 15px; }
     .int-etiqueta { font-size: 9px; letter-spacing: 0.05em; }
-    .vl-pagina { padding: 80px 16px 40px; }
+    .vl-pagina { padding: 80px 12px 40px; }
+    .caja-contenido { padding: 14px; }
     .input-texto { height: 200px; font-size: 14px; }
     .goma-boton { height: 40px; font-size: 13px; }
     
-    /* Ajustes finos para la tabla en móvil */
     .vl-admin-tabla {
-        min-width: 500px; /* Un poco más angosta para que no se vea tan apretada */
+        min-width: 0;
+        width: 100%;
     }
     .vl-admin-tabla th, 
     .vl-admin-tabla td {
-        padding: 10px 12px;
-        font-size: 12px;
+        padding: 8px 6px;
+        font-size: 11px;
+        word-break: break-word;
+    }
+    .vl-admin-tabla td:first-child {
+        max-width: 95px;
     }
 }
