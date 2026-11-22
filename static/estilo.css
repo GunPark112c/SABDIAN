@@ -34,7 +34,7 @@ html, body {
     color: var(--texto-principal); 
     background-color: var(--bg-pagina); 
     transition: background-color 0.5s ease, color 0.5s ease;
-    overflow-x: hidden;
+    overflow-x: hidden; /* Evita scroll horizontal por accidente */
 }
 button, input, textarea { font-family: inherit; }
 
@@ -75,9 +75,10 @@ button, input, textarea { font-family: inherit; }
     display: flex;
     flex-direction: column;
     gap: 20px;
+    min-width: 0; /* Evita que los hijos empujen la columna */
 }
 
-/* Resultados (dentro de la columna de análisis) */
+/* Resultados */
 .seccion-resultados {
     width: 100%;
     margin-top: 20px;
@@ -134,15 +135,53 @@ button, input, textarea { font-family: inherit; }
 .vl-docs-zona__texto { font-size: 16px; margin-bottom: 6px; }
 .vl-docs-zona__pista { font-size: 14px; color: var(--texto-secundario); font-family: 'Inter', sans-serif; }
 
-/* --- Tabla --- */
-.vl-admin-tabla-wrapper { width: 100%; overflow-x: auto; }
-.vl-admin-tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
+/* ============================================================
+   TABLA CORREGIDA (El truco está aquí)
+   ============================================================ */
+.vl-admin-tabla-wrapper { 
+    width: 100%; 
+    overflow-x: auto; /* Permite el scroll horizontal */
+    -webkit-overflow-scrolling: touch; /* Scroll suave en iOS */
+    border-radius: var(--radio);
+}
+
+.vl-admin-tabla { 
+    width: 100%; 
+    border-collapse: collapse; 
+    font-size: 14px; 
+    min-width: 600px; /* Fuerza un ancho mínimo para que no se aplaste */
+}
+
 .vl-admin-tabla thead { background: rgba(0,0,0,0.03); }
 body.modo-oscuro .vl-admin-tabla thead { background: rgba(255,255,255,0.03); }
-.vl-admin-tabla th { padding: 16px; text-align: left; font-weight: 700; text-transform: uppercase; font-size: 11px; border-bottom: 2px solid var(--borde-goma); }
-.vl-admin-tabla td { padding: 16px; border-bottom: 1px solid var(--borde-goma); color: var(--texto-secundario); }
-.vl-admin-tabla td:first-child { font-family: monospace; font-weight: bold; color: var(--texto-principal); }
 
+.vl-admin-tabla th { 
+    padding: 16px; 
+    text-align: left; 
+    font-weight: 700; 
+    text-transform: uppercase; 
+    font-size: 11px; 
+    border-bottom: 2px solid var(--borde-goma); 
+    white-space: nowrap; /* Evita que los títulos se rompan en varias líneas */
+}
+
+.vl-admin-tabla td { 
+    padding: 16px; 
+    border-bottom: 1px solid var(--borde-goma); 
+    color: var(--texto-secundario); 
+}
+
+.vl-admin-tabla td:first-child { 
+    font-family: monospace; 
+    font-weight: bold; 
+    color: var(--texto-principal);
+    max-width: 200px; /* Limita el ancho del nombre del archivo */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Pone "..." si el nombre es muy largo */
+    white-space: nowrap;
+}
+
+/* Colores de Veredicto */
 .APROBADO { color: #111 !important; font-weight: 900; }
 body.modo-oscuro .APROBADO { color: #4ade80 !important; }
 .RECHAZADO { color: #cc0000 !important; font-weight: 900; }
@@ -255,6 +294,7 @@ body.modo-oscuro .int-contenedor-tema {
     }
     .columna-analisis {
         grid-column: 1 / -1;
+        min-width: auto; /* Importante para que la tabla no fuerce el ancho */
     }
     .vl-seccion-encabezado {
         text-align: center;
@@ -269,6 +309,13 @@ body.modo-oscuro .int-contenedor-tema {
     .input-texto { height: 200px; font-size: 14px; }
     .goma-boton { height: 40px; font-size: 13px; }
     
-    .vl-admin-tabla-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    .vl-admin-tabla { min-width: 600px; }
+    /* Ajustes finos para la tabla en móvil */
+    .vl-admin-tabla {
+        min-width: 500px; /* Un poco más angosta para que no se vea tan apretada */
+    }
+    .vl-admin-tabla th, 
+    .vl-admin-tabla td {
+        padding: 10px 12px;
+        font-size: 12px;
+    }
 }
