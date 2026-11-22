@@ -5,11 +5,29 @@ const contenedorResultados = document.getElementById("resultados-container");
 const tbody = document.querySelector("#tabla-resultados tbody");
 const loaderContainer = document.getElementById("loader-container");
 
-// Elementos de la carpeta
 const inputCarpeta = document.getElementById("input-carpeta");
 const dropZone = document.getElementById("drop-zone");
 const zonaCargaTexto = document.getElementById("zona-carga-texto");
 const listaArchivosContainer = document.getElementById("lista-archivos");
+
+// --- FORZAR ESTADO INICIAL LIMPIO AL CARGAR LA PÁGINA ---
+window.addEventListener("load", () => {
+    toggle.checked = false; // Forzar el interruptor a apagado
+    document.body.classList.remove("modo-oscuro");
+    vistaIndividual.style.display = "flex";
+    vistaCarpeta.style.display = "none";
+    
+    // Limpiar la caja de texto y la lista de archivos
+    document.getElementById("codigo-individual").value = "";
+    inputCarpeta.value = ""; // Limpia los archivos seleccionados
+    zonaCargaTexto.style.display = "flex"; // Muestra el ícono de carpeta de nuevo
+    listaArchivosContainer.style.display = "none";
+    listaArchivosContainer.innerHTML = "";
+    
+    // Ocultar resultados y loader
+    contenedorResultados.style.display = "none";
+    loaderContainer.style.display = "none";
+});
 
 // --- Lógica del Interruptor ---
 toggle.addEventListener("change", () => {
@@ -32,9 +50,8 @@ inputCarpeta.addEventListener("change", (e) => {
     if (archivos.length > 0) {
         zonaCargaTexto.style.display = "none";
         listaArchivosContainer.style.display = "flex";
-        listaArchivosContainer.innerHTML = ""; // Limpiar lista anterior
+        listaArchivosContainer.innerHTML = ""; 
 
-        // Mostramos max 5 archivos para no hacer la caja gigante
         archivos.slice(0, 5).forEach(file => {
             const item = document.createElement("div");
             item.className = "archivo-item";
@@ -62,24 +79,13 @@ function mostrarResultados(resultados) {
 
     resultados.forEach(res => {
         const tr = document.createElement("tr");
-        
-        const tdNombre = document.createElement("td");
-        tdNombre.textContent = res.archivo;
-        
-        const tdVeredicto = document.createElement("td");
-        tdVeredicto.textContent = res.veredicto.replace(/_/g, ' ');
-        tdVeredicto.className = res.veredicto; 
-        
-        const tdScore = document.createElement("td");
-        tdScore.textContent = res.score_ia + "/100";
-        tdScore.style.fontWeight = "700";
+        const tdNombre = document.createElement("td"); tdNombre.textContent = res.archivo;
+        const tdVeredicto = document.createElement("td"); tdVeredicto.textContent = res.veredicto.replace(/_/g, ' '); tdVeredicto.className = res.veredicto; 
+        const tdScore = document.createElement("td"); tdScore.textContent = res.score_ia + "/100"; tdScore.style.fontWeight = "700";
         
         const tdDeuda = document.createElement("td");
         if (res.semantica && res.semantica.error) {
-            tdDeuda.textContent = "Error de IA";
-            tdDeuda.title = res.semantica.error;
-            tdDeuda.style.color = "#cc0000"; 
-            tdDeuda.style.fontWeight = "bold";
+            tdDeuda.textContent = "Error de IA"; tdDeuda.title = res.semantica.error; tdDeuda.style.color = "#cc0000"; tdDeuda.style.fontWeight = "bold";
         } else {
             tdDeuda.textContent = res.semantica ? (res.semantica.deuda_tecnica || "N/A") : "N/A";
             if (res.semantica && res.semantica.deuda_tecnica === "Alta") tdDeuda.style.color = "#cc0000";
@@ -95,28 +101,20 @@ function mostrarResultados(resultados) {
 // --- Lógica para Código Individual ---
 document.getElementById("btn-analizar-individual").addEventListener("click", async () => {
     const codigo = document.getElementById("codigo-individual").value;
-    if (!codigo.trim()) {
-        alert("Pega algún código primero.");
-        return;
-    }
+    if (!codigo.trim()) { alert("Pega algún código primero."); return; }
 
-    // Mostrar Loader
     contenedorResultados.style.display = "none";
     loaderContainer.style.display = "block";
 
     try {
         const resp = await fetch("/analizar-individual", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ codigo: codigo })
+            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ codigo: codigo })
         });
         const data = await resp.json();
-        
         setTimeout(() => {
             loaderContainer.style.display = "none";
             mostrarResultados([data]);
-        }, 500); // Pequeño delay para que la animación se disfrute
-
+        }, 1000); 
     } catch (err) {
         loaderContainer.style.display = "none";
         alert("Error de red: " + err.message);
@@ -126,12 +124,8 @@ document.getElementById("btn-analizar-individual").addEventListener("click", asy
 // --- Lógica para Carpeta ---
 document.getElementById("btn-analizar-carpeta").addEventListener("click", async () => {
     const archivos = inputCarpeta.files;
-    if (archivos.length === 0) {
-        alert("Por favor, selecciona una carpeta primero.");
-        return;
-    }
+    if (archivos.length === 0) { alert("Por favor, selecciona una carpeta primero."); return; }
 
-    // Mostrar Loader
     contenedorResultados.style.display = "none";
     loaderContainer.style.display = "block";
 
@@ -141,7 +135,6 @@ document.getElementById("btn-analizar-carpeta").addEventListener("click", async 
     for (const file of archivos) {
         if (file.name.startsWith('.') || file.webkitRelativePath.includes('node_modules') || file.webkitRelativePath.includes('venv') || file.webkitRelativePath.includes('__pycache__')) continue;
         if (file.size > 100000) continue; 
-
         try {
             const texto = await file.text();
             payload.archivos[file.webkitRelativePath || file.name] = texto;
@@ -150,19 +143,14 @@ document.getElementById("btn-analizar-carpeta").addEventListener("click", async 
     }
 
     if (archivosLeidos === 0) {
-        alert("No se encontraron archivos válidos.");
-        loaderContainer.style.display = "none";
-        return;
+        alert("No se encontraron archivos válidos."); loaderContainer.style.display = "none"; return;
     }
 
     try {
         const resp = await fetch("/analizar-carpeta", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+            method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
         });
         const data = await resp.json();
-        
         loaderContainer.style.display = "none";
         mostrarResultados(data.resultados);
     } catch (err) {
