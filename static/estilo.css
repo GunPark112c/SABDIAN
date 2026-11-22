@@ -300,6 +300,69 @@ body.modo-oscuro .int-contenedor-tema {
 }
 
 
+
+
+/* ============================================================
+   LISTA DE ARCHIVOS SELECCIONADOS
+   ============================================================ */
+.lista-archivos {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.archivo-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    color: var(--texto-principal);
+    background: var(--fondo-goma);
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--borde-goma);
+}
+
+.archivo-item span {
+    font-size: 16px;
+}
+
+.archivo-mas {
+    color: var(--texto-secundario);
+    font-style: italic;
+    justify-content: center;
+    border: 1px dashed var(--borde-goma);
+    background: transparent;
+}
+
+/* ============================================================
+   ANIMACIÓN DEL LOADER (Configuración del SVG)
+   ============================================================ */
+.main-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+.loader { width: 100%; max-width: 400px; margin: 0 auto; }
+.trace-bg { stroke: var(--borde-goma); stroke-width: 1.8; fill: none; }
+.trace-flow { stroke-width: 1.8; fill: none; stroke-dasharray: 40 400; stroke-dashoffset: 438; filter: drop-shadow(0 0 6px currentColor); animation: flow 3s cubic-bezier(0.5, 0, 0.9, 1) infinite; }
+.yellow { stroke: #ffea00; color: #ffea00; }
+.blue { stroke: #00ccff; color: #00ccff; }
+.green { stroke: #00ff15; color: #00ff15; }
+.purple { stroke: #9900ff; color: #9900ff; }
+.red { stroke: #ff3300; color: #ff3300; }
+@keyframes flow { to { stroke-dashoffset: 0; } }
+
+
+
 /* ============================================================
    RESPONSIVO (Ajustes para Tablets y Móviles)
    ============================================================ */
