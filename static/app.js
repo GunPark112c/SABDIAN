@@ -282,6 +282,7 @@ document.getElementById("btn-analizar-carpeta").addEventListener("click", async 
         return;
     }
 
+    
     limpiarResultados();
     loaderContainer.style.display = "block";
 
