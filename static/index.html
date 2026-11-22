@@ -72,7 +72,6 @@
                             <div class="vl-docs-zona__interior" id="zona-carga-texto">
                                 <span class="vl-docs-zona__icono">📁</span>
                                 <p class="vl-docs-zona__texto">Haz clic para <strong>seleccionar</strong> una carpeta</p>
-                                
                             </div>
                             <div id="lista-archivos" class="lista-archivos" style="display: none;"></div>
                             <input type="file" id="input-carpeta" webkitdirectory directory multiple style="display: none;">
@@ -115,7 +114,7 @@
                 </div>
             </div>
 
-            <!-- RESULTADOS (AHORA ESTÁ AQUÍ ADENTRO) -->
+            <!-- RESULTADOS -->
             <div id="resultados-container" class="seccion-resultados" style="display: none;">
                 <div class="vl-seccion-encabezado" style="margin-bottom: 20px;">
                     <h3 class="vl-seccion-encabezado__titulo" style="font-size: 24px;">Resultados del Análisis</h3>
@@ -132,6 +131,30 @@
                         </thead>
                         <tbody></tbody>
                     </table>
+                </div>
+
+                <!-- SEGUNDA TABLA: HALLAZGOS Y SIGNIFICADO -->
+                <div id="detalle-hallazgos-container" class="seccion-hallazgos" style="display: none;">
+                    <div class="vl-seccion-encabezado" style="margin-bottom: 16px;">
+                        <h3 id="titulo-hallazgos" class="vl-seccion-encabezado__titulo" style="font-size: 20px;">
+                            Hallazgos del Analizador y Qué Significan
+                        </h3>
+                        <p class="vl-seccion-encabezado__subtitulo">
+                            Detalle extraído del análisis y guía rápida de lo que significa cada métrica.
+                        </p>
+                    </div>
+                    <div class="vl-admin-tabla-wrapper goma-caja">
+                        <table class="vl-admin-tabla tabla-hallazgos" id="tabla-hallazgos">
+                            <thead>
+                                <tr>
+                                    <th>Métrica / Hallazgo</th>
+                                    <th>Encontrado</th>
+                                    <th>Qué Significa</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </section>
