@@ -90,6 +90,13 @@ button, input, textarea { font-family: inherit; }
     max-width: 100%;
 }
 
+.seccion-hallazgos {
+    margin-top: 28px;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
 /* --- Componentes --- */
 .vista-contenedor {
     width: 100%;
@@ -146,7 +153,7 @@ button, input, textarea { font-family: inherit; }
 .vl-docs-zona__pista { font-size: 14px; color: var(--texto-secundario); font-family: 'Inter', sans-serif; }
 
 /* ============================================================
-   TABLA CORREGIDA
+   TABLAS
    ============================================================ */
 .vl-admin-tabla-wrapper { 
     width: 100%; 
@@ -191,6 +198,25 @@ body.modo-oscuro .vl-admin-tabla thead { background: rgba(255,255,255,0.03); }
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+}
+
+.tabla-hallazgos td:first-child {
+    max-width: none;
+    white-space: nowrap;
+    font-family: var(--fuente-global);
+    font-size: 12px;
+}
+
+.tabla-hallazgos td.hallazgo-significado {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--texto-secundario);
+    min-width: 240px;
+}
+
+#tabla-resultados tbody tr.fila-activa {
+    background: rgba(59, 130, 246, 0.08);
 }
 
 /* Colores de Veredicto */
@@ -336,5 +362,13 @@ body.modo-oscuro .int-contenedor-tema {
     }
     .vl-admin-tabla td:first-child {
         max-width: 95px;
+    }
+    .tabla-hallazgos td:first-child {
+        white-space: normal;
+        font-size: 11px;
+    }
+    .tabla-hallazgos td.hallazgo-significado {
+        min-width: 170px;
+        font-size: 11px;
     }
 }
