@@ -1,356 +1,145 @@
-// --- REFERENCIAS AL DOM ---
-const toggle = document.getElementById("toggle-modo");
-const vistaIndividual = document.getElementById("vista-individual");
-const vistaCarpeta = document.getElementById("vista-carpeta");
-const contenedorResultados = document.getElementById("resultados-container");
-const loaderContainer = document.getElementById("loader-container");
-const tbody = document.querySelector("#tabla-resultados tbody");
+import os
+import json
+import time
+from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+from typing import Dict
 
-const contenedorHallazgos = document.getElementById("detalle-hallazgos-container");
-const tituloHallazgos = document.getElementById("titulo-hallazgos");
-const tbodyHallazgos = document.querySelector("#tabla-hallazgos tbody");
+# Importamos el cliente de Groq
+from groq import Groq
 
-// Elementos de la carpeta
-const inputCarpeta = document.getElementById("input-carpeta");
-const dropZone = document.getElementById("drop-zone");
-const zonaCargaTexto = document.getElementById("zona-carga-texto");
-const listaArchivosContainer = document.getElementById("lista-archivos");
+# Importamos las funciones de tu analizador
+from analizador import (
+    es_codigo_valido, analizar_calidad_estatica, metricas_textura,
+    score_ia_heuristico, calcular_veredicto,
+)
 
-function limpiarResultados() {
-    contenedorResultados.style.display = "none";
-    tbody.innerHTML = "";
-    contenedorHallazgos.style.display = "none";
-    tbodyHallazgos.innerHTML = "";
+app = FastAPI()
+
+# ============================================================
+# CONFIGURACIÓN DE GROQ
+# ============================================================
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "AQUI_PEGA_TU_API_KEY_LOCAL")
+
+client = Groq(api_key=GROQ_API_KEY)
+MODELO_GROQ = "openai/gpt-oss-120b"
+
+SYSTEM_PROMPT = """
+Eres un revisor de código senior. NO intentes adivinar si es IA.
+Evalúa SOLO la semántica de negocio y la arquitectura del código (puede ser Python, C, C++, Java, etc.).
+
+REGLAS PARA DEUDA TÉCNICA:
+- "Baja": type hints/tipos claros, docstrings/comentarios útiles, manejo de errores, funciones cortas.
+- "Media": falta documentación O manejo de errores, pero la lógica es clara.
+- "Alta": funciones gigantes, sin comentarios útiles, lógica enrevesada o duplicación masiva.
+
+Devuelve ESTRICTAMENTE un JSON con esta estructura:
+{
+    "responsabilidad_unica": true o false,
+    "comentarios_con_contexto": true o false,
+    "logica_dominio_real": true o false,
+    "arquitectura_coherente": true o false,
+    "duplicacion_evidente": true o false,
+    "observaciones": ["obs 1", "obs 2"],
+    "deuda_tecnica": "Baja, Media o Alta"
 }
+"""
 
-// --- 1. FORZAR ESTADO INICIAL LIMPIO AL CARGAR LA PÁGINA ---
-window.addEventListener("load", () => {
-    toggle.checked = false;
-    document.body.classList.remove("modo-oscuro");
-    vistaIndividual.style.display = "flex";
-    vistaCarpeta.style.display = "none";
+def evaluar_semantica_con_ia(codigo_fuente: str) -> dict:
+    try:
+        respuesta = client.chat.completions.create(
+            model=MODELO_GROQ,
+            messages=[
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": f"Analiza este código:\n\n{codigo_fuente}"}
+            ],
+            temperature=0.1,
+            response_format={"type": "json_object"}
+        )
+        contenido = respuesta.choices[0].message.content
+        return json.loads(contenido)
+    except Exception as e:
+        print(f"❌ ERROR DE GROQ: {e}")
+        return {"error": str(e), "deuda_tecnica": "N/A"}
+
+# ============================================================
+# RUTAS DE LA API
+# ============================================================
+
+# 1. Ruta para Código Individual (La que usa el Modo Claro)
+class CodigoIn(BaseModel):
+    codigo: str
+
+@app.post("/analizar-individual")
+def analizar_individual(datos: CodigoIn):
+    if not es_codigo_valido(datos.codigo):
+        return {"error": "El texto no parece código válido.", "archivo": "Código Individual"}
+
+    res_est = analizar_calidad_estatica(datos.codigo)
+    textura = metricas_textura(datos.codigo)
+    score_ia, motivos_ia = score_ia_heuristico(res_est, textura, datos.codigo)
     
-    document.getElementById("codigo-individual").value = "";
-    inputCarpeta.value = "";
-    zonaCargaTexto.style.display = "flex";
-    listaArchivosContainer.style.display = "none";
-    listaArchivosContainer.innerHTML = "";
+    semantica = evaluar_semantica_con_ia(datos.codigo)
+    time.sleep(1) # Pausa de seguridad
     
-    limpiarResultados();
-    loaderContainer.style.display = "none";
-});
+    nivel, razones = calcular_veredicto(res_est, textura, score_ia, semantica)
 
-// --- 2. LÓGICA DEL INTERRUPTOR (TEMA Y VISTA) ---
-toggle.addEventListener("change", () => {
-    if (toggle.checked) {
-        document.body.classList.add("modo-oscuro");
-        vistaIndividual.style.display = "none";
-        vistaCarpeta.style.display = "flex";
-    } else {
-        document.body.classList.remove("modo-oscuro");
-        vistaIndividual.style.display = "flex";
-        vistaCarpeta.style.display = "none";
-    }
-    limpiarResultados();
-    loaderContainer.style.display = "none";
-});
-
-// --- 3. MOSTRAR LOS ARCHIVOS DE LA CARPETA SELECCIONADA ---
-inputCarpeta.addEventListener("change", (e) => {
-    const archivos = Array.from(e.target.files);
-    if (archivos.length > 0) {
-        zonaCargaTexto.style.display = "none";
-        listaArchivosContainer.style.display = "flex";
-        listaArchivosContainer.innerHTML = "";
-
-        archivos.slice(0, 5).forEach(file => {
-            const item = document.createElement("div");
-            item.className = "archivo-item";
-            item.innerHTML = `<span>📄</span> ${file.name}`;
-            listaArchivosContainer.appendChild(item);
-        });
-        if (archivos.length > 5) {
-            const mas = document.createElement("div");
-            mas.className = "archivo-item archivo-mas";
-            mas.textContent = `... y ${archivos.length - 5} archivos más`;
-            listaArchivosContainer.appendChild(mas);
-        }
-    }
-});
-
-// --- 4. FUNCIONES PARA MOSTRAR RESULTADOS Y HALLAZGOS ---
-function obtenerValor(obj, rutas, porDefecto = "—") {
-    for (const ruta of rutas) {
-        const partes = ruta.split(".");
-        let actual = obj;
-        let ok = true;
-        for (const p of partes) {
-            if (actual && typeof actual === "object" && p in actual && actual[p] !== undefined && actual[p] !== null) {
-                actual = actual[p];
-            } else {
-                ok = false;
-                break;
-            }
-        }
-        if (ok) {
-            if (Array.isArray(actual)) {
-                return actual.length > 0 ? actual.join(" • ") : "Ninguno";
-            }
-            return String(actual);
-        }
-    }
-    return porDefecto;
-}
-
-function mostrarDetalleHallazgos(res) {
-    if (!res) {
-        contenedorHallazgos.style.display = "none";
-        tbodyHallazgos.innerHTML = "";
-        return;
+    return {
+        "archivo": "Código Individual",
+        "veredicto": nivel,
+        "razones": razones,
+        "score_ia": score_ia,
+        "semantica": semantica,
+        "estatica": res_est,
+        "textura": textura,
     }
 
-    contenedorHallazgos.style.display = "block";
-    tituloHallazgos.textContent = `Hallazgos del Analizador — ${res.archivo || "Bloque"}`;
-    tbodyHallazgos.innerHTML = "";
 
-    const filas = [
-        {
-            metrica: "Líneas totales",
-            valor: obtenerValor(res, ["estatica.lineas_totales"]),
-            significado: "Cantidad total de líneas del archivo o bloque; ayuda a dimensionar su extensión y modularidad."
-        },
-        {
-            metrica: "Funciones",
-            valor: obtenerValor(res, ["estatica.num_funciones"]),
-            significado: "Número de funciones o bloques detectados en el código."
-        },
-        {
-            metrica: "Complejidad alta",
-            valor: obtenerValor(res, ["estatica.complejidad_alta"]),
-            significado: "Funciones con complejidad ciclomática superior al umbral definido, más difíciles de probar y mantener."
-        },
-        {
-            metrica: "Sin docstring",
-            valor: obtenerValor(res, ["estatica.funciones_sin_docstring"]),
-            significado: "Funciones sin docstring que explique su propósito, parámetros o retorno."
-        },
-        {
-            metrica: "Sin type hints",
-            valor: obtenerValor(res, ["estatica.funciones_sin_typehints"]),
-            significado: "Funciones sin anotaciones de tipo completas en parámetros o retorno."
-        },
-        {
-            metrica: "except: pass",
-            valor: obtenerValor(res, ["estatica.except_pass"]),
-            significado: "Bloques except que solo contienen pass, ocultando errores en silencio."
-        },
-        {
-            metrica: "Score IA",
-            valor: res.score_ia !== undefined ? `${res.score_ia}/100` : "—",
-            significado: "Puntaje heurístico (0 a 100) basado en entropía, burstiness, nombres y patrones del código."
-        },
-        {
-            metrica: "Entropía",
-            valor: obtenerValor(res, ["textura.entropia_nombres"]),
-            significado: "Entropía de Shannon de los nombres/identificadores; valores bajos indican repetición o poca variedad."
-        },
-        {
-            metrica: "Burstiness",
-            valor: obtenerValor(res, ["textura.burstiness"]),
-            significado: "Desviación estándar de la longitud de líneas; valores bajos reflejan líneas de extensión muy uniforme."
-        },
-        {
-            metrica: "Deuda técnica (LLM)",
-            valor: obtenerValor(res, ["semantica.deuda_tecnica"]),
-            significado: "Evaluación semántica del modelo sobre mantenibilidad, claridad y posibles atajos de diseño."
-        },
-        {
-            metrica: "Razones / Observaciones",
-            valor: obtenerValor(res, ["razones", "semantica.observaciones"]),
-            significado: "Motivos del veredicto y observaciones puntuales detectadas durante el análisis."
-        }
-    ];
+# 2. Ruta para Carpeta (La que usa el Modo Oscuro)
+class CarpetaIn(BaseModel):
+    archivos: Dict[str, str] 
 
-    filas.forEach(item => {
-        const tr = document.createElement("tr");
-
-        const tdMetrica = document.createElement("td");
-        tdMetrica.textContent = item.metrica;
-
-        const tdValor = document.createElement("td");
-        tdValor.textContent = item.valor;
-        tdValor.style.fontWeight = "700";
-
-        const tdSignificado = document.createElement("td");
-        tdSignificado.textContent = item.significado;
-        tdSignificado.className = "hallazgo-significado";
-
-        tr.append(tdMetrica, tdValor, tdSignificado);
-        tbodyHallazgos.appendChild(tr);
-    });
-}
-
-function mostrarResultados(resultados) {
-    contenedorResultados.style.display = "block";
-    tbody.innerHTML = "";
-
-    if (!resultados || resultados.length === 0) {
-        tbody.innerHTML = "<tr><td colspan='4' style='text-align:center;'>No hay datos para analizar.</td></tr>";
-        mostrarDetalleHallazgos(null);
-        return;
-    }
-
-    resultados.forEach((res, idx) => {
-        const tr = document.createElement("tr");
-        tr.style.cursor = "pointer";
-        tr.title = "Haz clic para ver los hallazgos de este archivo abajo";
-
-        const tdNombre = document.createElement("td");
-        tdNombre.textContent = res.archivo;
-        
-        const tdVeredicto = document.createElement("td");
-        tdVeredicto.textContent = (res.veredicto || "").replace(/_/g, ' ');
-        tdVeredicto.className = res.veredicto || ""; 
-        
-        const tdScore = document.createElement("td");
-        tdScore.textContent = res.score_ia + "/100";
-        tdScore.style.fontWeight = "700";
-        
-        const tdDeuda = document.createElement("td");
-        if (res.semantica && res.semantica.error) {
-            tdDeuda.textContent = "Error de IA";
-            tdDeuda.title = res.semantica.error;
-            tdDeuda.style.color = "#cc0000"; 
-            tdDeuda.style.fontWeight = "bold";
-        } else {
-            tdDeuda.textContent = res.semantica ? (res.semantica.deuda_tecnica || "N/A") : "N/A";
-            if (res.semantica && res.semantica.deuda_tecnica === "Alta") tdDeuda.style.color = "#cc0000";
-            if (res.semantica && res.semantica.deuda_tecnica === "Media") tdDeuda.style.color = "#cc7700";
-            if (res.semantica && res.semantica.deuda_tecnica === "Baja") tdDeuda.style.color = document.body.classList.contains("modo-oscuro") ? "#4ade80" : "#111111";
-        }
-
-        tr.addEventListener("click", () => {
-            tbody.querySelectorAll("tr").forEach(fila => fila.classList.remove("fila-activa"));
-            tr.classList.add("fila-activa");
-            mostrarDetalleHallazgos(res);
-        });
-
-        if (idx === 0) tr.classList.add("fila-activa");
-
-        tr.append(tdNombre, tdVeredicto, tdScore, tdDeuda);
-        tbody.appendChild(tr);
-    });
-
-    mostrarDetalleHallazgos(resultados[0]);
-}
-
-// --- 5. LÓGICA PARA ANALIZAR CÓDIGO INDIVIDUAL ---
-document.getElementById("btn-analizar-individual").addEventListener("click", async () => {
-    const codigo = document.getElementById("codigo-individual").value;
-    if (!codigo.trim()) {
-        alert("Pega algún código primero.");
-        return;
-    }
-
-    limpiarResultados();
-    loaderContainer.style.display = "block";
-
-    try {
-        const resp = await fetch("/analizar-individual", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ codigo: codigo })
-        });
-        const data = await resp.json();
-        
-        setTimeout(() => {
-            loaderContainer.style.display = "none";
-            mostrarResultados([data]);
-        }, 800); 
-
-    } catch (err) {
-        loaderContainer.style.display = "none";
-        alert("Error de red: " + err.message);
-    }
-});
-
-// --- 6. LÓGICA PARA ANALIZAR CARPETA ---
-document.getElementById("btn-analizar-carpeta").addEventListener("click", async () => {
-    const archivos = inputCarpeta.files;
-    if (archivos.length === 0) {
-        alert("Por favor, selecciona una carpeta primero.");
-        return;
-    }
-
-    limpiarResultados();
-    loaderContainer.style.display = "block";
-
-    const payload = { archivos: {} };
-    let archivosLeidos = 0;
-
-    for (const file of archivos) {
-        if (file.name.startsWith('.') || file.webkitRelativePath.includes('node_modules') || file.webkitRelativePath.includes('venv') || file.webkitRelativePath.includes('__pycache__')) continue;
-        if (file.size > 100000) continue;
-
-        try {
-            const texto = await file.text();
-            payload.archivos[file.webkitRelativePath || file.name] = texto;
-            archivosLeidos++;
-        } catch (e) {}
-    }
-
-    if (archivosLeidos === 0) {
-        alert("No se encontraron archivos válidos para analizar.");
-        loaderContainer.style.display = "none";
-        return;
-    }
-
-    try {
-        const resp = await fetch("/analizar-carpeta", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
-        });
-        const data = await resp.json();
-        
-        loaderContainer.style.display = "none";
-        mostrarResultados(data.resultados);
-    } catch (err) {
-        loaderContainer.style.display = "none";
-        alert("Error de red: " + err.message);
-    }
-});
-
-// --- 7. EFECTOS VISUALES Y LÓGICA DEL DRAG & DROP ---
-dropZone.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    dropZone.style.borderColor = "#4ade80";
-});
-
-dropZone.addEventListener("dragleave", (e) => {
-    e.preventDefault();
-    dropZone.style.borderColor = "var(--borde-goma)";
-});
-
-dropZone.addEventListener("drop", async (e) => {
-    e.preventDefault();
-    dropZone.style.borderColor = "var(--borde-goma)";
+@app.post("/analizar-carpeta")
+def analizar_carpeta(datos: CarpetaIn):
+    resultados = []
+    contador = 0
     
-    if (e.dataTransfer.items) {
-        const items = Array.from(e.dataTransfer.items);
-        if (items.length === 1 && items[0].webkitGetAsEntry && items[0].webkitGetAsEntry().isDirectory) {
-            alert("Por seguridad, los navegadores no permiten leer carpetas al arrastrarlas. Por favor, haz clic en 'seleccionar' y elige la carpeta desde el explorador.");
-            return;
-        }
-
-        const archivosSoltados = Array.from(e.dataTransfer.files);
-        if (archivosSoltados.length > 0) {
-            const dt = new DataTransfer();
-            archivosSoltados.forEach(file => dt.items.add(file));
-            inputCarpeta.files = dt.files;
+    for nombre, codigo in datos.archivos.items():
+        if contador >= 20: 
+            break
             
-            inputCarpeta.dispatchEvent(new Event('change'));
-        }
-    }
-});
+        if not any(nombre.endswith(ext) for ext in ['.py', '.js', '.ts', '.java', '.c', '.cpp', '.cs', '.html', '.css']): 
+            continue
+            
+        if not es_codigo_valido(codigo): 
+            continue 
 
+        res_est = analizar_calidad_estatica(codigo)
+        textura = metricas_textura(codigo)
+        score_ia, motivos_ia = score_ia_heuristico(res_est, textura, codigo)
+        
+        semantica = evaluar_semantica_con_ia(codigo)
+        
+        # Pausa de 4 segundos para no saturar la API
+        time.sleep(4) 
+        
+        nivel, razones = calcular_veredicto(res_est, textura, score_ia, semantica)
+
+        resultados.append({
+            "archivo": nombre, 
+            "veredicto": nivel, 
+            "razones": razones,
+            "score_ia": score_ia, 
+            "semantica": semantica,
+            "estatica": res_est,
+            "textura": textura,
+        })
+        contador += 1
+
+    return {"resultados": resultados}
+
+# ============================================================
+# SERVIR EL FRONTEND
+# ============================================================
+app.mount("/", StaticFiles(directory="static", html=True), name="static")
