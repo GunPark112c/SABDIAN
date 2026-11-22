@@ -89,35 +89,40 @@
         </section>
 
         <!-- SECCIÓN DE INFORMACIÓN (¿Qué es SABDIAN?) -->
+              <!-- SECCIÓN DE INFORMACIÓN (¿Qué es SABDIAN?) -->
         <section class="seccion-info">
             <div class="info-tarjeta goma-caja">
-                <h2 class="info-titulo">¿Qué es SABDIAN?</h2>
+                <h2 class="info-titulo">SABDIAN</h2>
+                <p class="info-texto" style="font-size: 18px; font-weight: 600; color: var(--texto-principal);">
+                    Sistema Analítico de Barrido y Detección por Inteligencia Artificial Neuronal
+                </p>
                 <p class="info-texto">
-                    SABDIAN es una herramienta de <strong>análisis de código impulsada por Inteligencia Artificial</strong>. 
-                    Su objetivo es ayudarte a detectar la <em>deuda técnica</em> (código difícil de mantener) y 
-                    verificar si un bloque de código parece haber sido generado por una IA.
+                    SABDIAN es una plataforma híbrida de auditoría de software. No se limita a "leer" el código; 
+                    ejecuta un riguroso <strong>barrido estático multi-lenguaje</strong> para extraer métricas de calidad, 
+                    para luego delegar la evaluación de la arquitectura y lógica de negocio a una 
+                    <strong>red neuronal avanzada</strong>.
                 </p>
                 
                 <div class="info-pasos">
                     <div class="paso">
                         <span class="paso-numero">1</span>
                         <div>
-                            <h3 class="paso-titulo">Elige tu modo</h3>
-                            <p class="paso-texto">Usa el interruptor de arriba para analizar un <strong>bloque individual</strong> o un <strong>proyecto completo</strong> (carpeta).</p>
+                            <h3 class="paso-titulo">Selecciona el Alcance</h3>
+                            <p class="paso-texto">Usa el interruptor para elegir entre auditar un <strong>bloque individual</strong> o realizar un barrido profundo a un <strong>proyecto completo</strong> (carpeta).</p>
                         </div>
                     </div>
                     <div class="paso">
                         <span class="paso-numero">2</span>
                         <div>
-                            <h3 class="paso-titulo">Sube tu código</h3>
-                            <p class="paso-texto">Pega el texto o arrastra la carpeta de tu proyecto. Filtramos automáticamente archivos basura.</p>
+                            <h3 class="paso-titulo">Barrido Estático (Fase 1)</h3>
+                            <p class="paso-texto">El motor en Python analiza el código sin ejecutarlo. Evalúa la <strong>complejidad ciclomática</strong>, <strong>duplicación</strong>, <strong>entropía de nombres</strong> y detecta malas prácticas.</p>
                         </div>
                     </div>
                     <div class="paso">
                         <span class="paso-numero">3</span>
                         <div>
-                            <h3 class="paso-titulo">Obtén el veredicto</h3>
-                            <p class="paso-texto">El sistema evalúa la <strong>complejidad</strong>, el <strong>estilo</strong> y la <strong>lógica</strong> de tu código con IA, dándote una calificación.</p>
+                            <h3 class="paso-titulo">Evaluación Neuronal (Fase 2)</h3>
+                            <p class="paso-texto">Los resultados del barrido se envían a la IA, que evalúa la <strong>semántica del código</strong>, la coherencia arquitectónica y emite el veredicto de <strong>Deuda Técnica</strong>.</p>
                         </div>
                     </div>
                 </div>
