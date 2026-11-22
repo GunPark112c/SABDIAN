@@ -254,7 +254,9 @@ body.modo-oscuro .int-contenedor-tema {
   --fondo-tapa: radial-gradient(circle at 34% 28%, #636c7a 0%, #454b56 42%, #2a2e35 72%, #191b20 100%); --sombra-tapa: 0 3px 6px rgba(0, 0, 0, 0.6), inset 0 -3px 4px rgba(0, 0, 0, 0.65), inset 0 2px 3px rgba(255, 255, 255, 0.25);
   --fondo-perno: radial-gradient(circle at 34% 26%, #575f6c 0%, #3a3f48 36%, #262930 68%, #191b20 92%, #121417 100%); --sombra-perno: inset 0 -3px 6px rgba(0, 0, 0, 0.7), inset 0 2px 3px rgba(255, 255, 255, 0.2), 0 6px 12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08); --brillo-perno: rgba(255, 255, 255, 0.35);
 }
-.int-escenario { position: relative; display: inline-flex; align-items: center; gap: 20px; user-select: none; cursor: pointer; }
+
+/* Etiquetas arriba y abajo en PC y móvil */
+.int-escenario { position: relative; display: inline-flex; flex-direction: column; align-items: center; gap: 14px; user-select: none; cursor: pointer; }
 .int-entrada { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .int-etiqueta { font-family: var(--fuente-global); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; color: var(--texto-apagado); transition: color 0.45s ease, text-shadow 0.45s ease; }
 .int-etiqueta-apagado { color: var(--texto-activo); font-weight: 600; text-shadow: var(--sombra-texto); }
@@ -344,10 +346,6 @@ body.modo-oscuro .int-contenedor-tema {
         grid-template-columns: minmax(280px, 1fr) minmax(0, 1.5fr);
         gap: 24px;
     }
-    .int-escenario {
-        flex-direction: column;
-        gap: 12px;
-    }
     .int-selector {
         --tamano: 110px;
     }
@@ -375,7 +373,7 @@ body.modo-oscuro .int-contenedor-tema {
 
 @media (max-width: 600px) {
     .int-selector { --tamano: 80px !important; }
-    .int-escenario { flex-direction: column; gap: 15px; }
+    .int-escenario { gap: 15px; }
     .int-etiqueta { font-size: 9px; letter-spacing: 0.05em; }
     .vl-pagina { padding: 80px 12px 40px; }
     .caja-contenido { padding: 14px; }
