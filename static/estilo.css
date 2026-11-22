@@ -56,8 +56,8 @@ button, input, textarea { font-family: inherit; }
     padding: 104px 24px 64px;
     min-height: 100vh;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-    gap: 40px;
+    grid-template-columns: minmax(340px, 1fr) minmax(0, 1.6fr);
+    gap: 32px;
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
@@ -70,7 +70,6 @@ button, input, textarea { font-family: inherit; }
     align-items: flex-start;
     padding-top: 40px;
     min-width: 0;
-    max-width: 100%;
 }
 
 .columna-analisis {
@@ -255,13 +254,13 @@ body.modo-oscuro .int-contenedor-tema {
   --fondo-tapa: radial-gradient(circle at 34% 28%, #636c7a 0%, #454b56 42%, #2a2e35 72%, #191b20 100%); --sombra-tapa: 0 3px 6px rgba(0, 0, 0, 0.6), inset 0 -3px 4px rgba(0, 0, 0, 0.65), inset 0 2px 3px rgba(255, 255, 255, 0.25);
   --fondo-perno: radial-gradient(circle at 34% 26%, #575f6c 0%, #3a3f48 36%, #262930 68%, #191b20 92%, #121417 100%); --sombra-perno: inset 0 -3px 6px rgba(0, 0, 0, 0.7), inset 0 2px 3px rgba(255, 255, 255, 0.2), 0 6px 12px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(255, 255, 255, 0.08); --brillo-perno: rgba(255, 255, 255, 0.35);
 }
-.int-escenario { position: relative; display: inline-flex; align-items: center; gap: 36px; user-select: none; cursor: pointer; }
+.int-escenario { position: relative; display: inline-flex; align-items: center; gap: 20px; user-select: none; cursor: pointer; }
 .int-entrada { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
 .int-etiqueta { font-family: var(--fuente-global); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; color: var(--texto-apagado); transition: color 0.45s ease, text-shadow 0.45s ease; }
 .int-etiqueta-apagado { color: var(--texto-activo); font-weight: 600; text-shadow: var(--sombra-texto); }
 .int-entrada:checked ~ .int-etiqueta-apagado { color: var(--texto-apagado); font-weight: 500; text-shadow: none; }
 .int-entrada:checked ~ .int-etiqueta-encendido { color: var(--texto-activo); font-weight: 600; text-shadow: var(--sombra-texto); }
-.int-selector { --tamano: 140px; position: relative; display: block; width: var(--tamano); height: var(--tamano); flex: none; border-radius: 50%; background: var(--fondo-selector); cursor: pointer; box-shadow: var(--sombra-selector); transition: box-shadow 0.45s ease, transform 0.25s ease, background 0.45s ease; }
+.int-selector { --tamano: 120px; position: relative; display: block; width: var(--tamano); height: var(--tamano); flex: none; border-radius: 50%; background: var(--fondo-selector); cursor: pointer; box-shadow: var(--sombra-selector); transition: box-shadow 0.45s ease, transform 0.25s ease, background 0.45s ease; }
 .int-escenario:active .int-selector { transform: translateY(1px) scale(0.992); box-shadow: var(--sombra-selector-presionado); }
 .int-entrada:focus-visible ~ .int-selector { box-shadow: var(--sombra-selector), 0 0 0 3px rgba(59, 130, 246, 0.45); }
 .int-bisel { position: absolute; inset: 0; border-radius: 50%; background: var(--fondo-bisel); box-shadow: var(--sombra-bisel); transition: background 0.45s ease, box-shadow 0.45s ease; }
@@ -321,6 +320,20 @@ body.modo-oscuro .int-contenedor-tema {
 /* ============================================================
    RESPONSIVO
    ============================================================ */
+@media (max-width: 1150px) and (min-width: 901px) {
+    .vl-pagina {
+        grid-template-columns: minmax(280px, 1fr) minmax(0, 1.5fr);
+        gap: 24px;
+    }
+    .int-escenario {
+        flex-direction: column;
+        gap: 12px;
+    }
+    .int-selector {
+        --tamano: 110px;
+    }
+}
+
 @media (max-width: 900px) {
     .vl-pagina {
         grid-template-columns: minmax(0, 1fr);
