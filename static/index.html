@@ -5,13 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SABDIAN - Analizador IA</title>
     
+    <!-- Fuentes de Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Tu archivo CSS -->
     <link rel="stylesheet" href="estilo.css">
 </head>
 <body>
 
+    <!-- Cabecera -->
     <header class="vl-cabecera">
         <h1 class="vl-cabecera__logo">SABDIAN</h1>
         <div class="vl-cabecera__acciones">
@@ -19,10 +23,10 @@
         </div>
     </header>
 
-    <!-- Contenedor Principal (Grid) -->
+    <!-- Contenido Principal -->
     <main class="vl-pagina">
         
-        <!-- Columna Izquierda: Interruptor (Regla de tercios: 1/3) -->
+        <!-- COLUMNA IZQUIERDA: INTERRUPTOR -->
         <section class="columna-interruptor">
             <div class="int-contenedor-tema" id="theme-container">
                 <label class="int-escenario">
@@ -42,7 +46,7 @@
             </div>
         </section>
 
-        <!-- Columna Derecha: Área de Análisis (Regla de tercios: 2/3) -->
+        <!-- COLUMNA DERECHA: ÁREA DE ANÁLISIS -->
         <section class="columna-analisis">
             <!-- VISTA 1: CÓDIGO INDIVIDUAL -->
             <div id="vista-individual" class="vista-contenedor">
@@ -84,7 +88,43 @@
             </div>
         </section>
 
-        <!-- Resultados (Ocupa todo el ancho, abajo) -->
+        <!-- SECCIÓN DE INFORMACIÓN (¿Qué es SABDIAN?) -->
+        <section class="seccion-info">
+            <div class="info-tarjeta goma-caja">
+                <h2 class="info-titulo">¿Qué es SABDIAN?</h2>
+                <p class="info-texto">
+                    SABDIAN es una herramienta de <strong>análisis de código impulsada por Inteligencia Artificial</strong>. 
+                    Su objetivo es ayudarte a detectar la <em>deuda técnica</em> (código difícil de mantener) y 
+                    verificar si un bloque de código parece haber sido generado por una IA.
+                </p>
+                
+                <div class="info-pasos">
+                    <div class="paso">
+                        <span class="paso-numero">1</span>
+                        <div>
+                            <h3 class="paso-titulo">Elige tu modo</h3>
+                            <p class="paso-texto">Usa el interruptor de arriba para analizar un <strong>bloque individual</strong> o un <strong>proyecto completo</strong> (carpeta).</p>
+                        </div>
+                    </div>
+                    <div class="paso">
+                        <span class="paso-numero">2</span>
+                        <div>
+                            <h3 class="paso-titulo">Sube tu código</h3>
+                            <p class="paso-texto">Pega el texto o arrastra la carpeta de tu proyecto. Filtramos automáticamente archivos basura.</p>
+                        </div>
+                    </div>
+                    <div class="paso">
+                        <span class="paso-numero">3</span>
+                        <div>
+                            <h3 class="paso-titulo">Obtén el veredicto</h3>
+                            <p class="paso-texto">El sistema evalúa la <strong>complejidad</strong>, el <strong>estilo</strong> y la <strong>lógica</strong> de tu código con IA, dándote una calificación.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RESULTADOS (Ocupa todo el ancho, abajo) -->
         <section id="resultados-container" class="seccion-resultados" style="display: none;">
             <div class="vl-seccion-encabezado" style="margin-bottom: 20px;">
                 <h3 class="vl-seccion-encabezado__titulo" style="font-size: 24px;">Resultados del Análisis</h3>
