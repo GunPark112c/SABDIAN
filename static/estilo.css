@@ -1,5 +1,5 @@
 /* ============================================================
-   VARIABLES (MODO CLARO POR DEFECTO)
+   VARIABLES
    ============================================================ */
 :root {
     --bg-pagina: #ebedf0;
@@ -26,7 +26,7 @@ body.modo-oscuro {
     --sombra-boton: 0 8px 15px -4px rgba(0, 0, 0, 0.4), inset 0 -3px 4px -1px rgba(0, 0, 0, 0.4), 0 -5px 10px -1px rgba(255, 255, 255, 0.05), inset 0 3px 4px -1px rgba(255, 255, 255, 0.05);
 }
 
-/* --- Reset y Fuente --- */
+/* --- Reset --- */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html, body { 
     width: 100%; min-height: 100%; 
@@ -34,6 +34,7 @@ html, body {
     color: var(--texto-principal); 
     background-color: var(--bg-pagina); 
     transition: background-color 0.5s ease, color 0.5s ease;
+    overflow-x: hidden;
 }
 button, input, textarea { font-family: inherit; }
 
@@ -49,20 +50,18 @@ button, input, textarea { font-family: inherit; }
 .texto-analizador { font-size: 13px; color: var(--texto-secundario); font-family: 'Inter', sans-serif; }
 
 /* ============================================================
-   LAYOUT PRINCIPAL: REGLA DE LOS TERCIOS
+   LAYOUT PRINCIPAL (Grid)
    ============================================================ */
 .vl-pagina {
     padding: 104px 24px 64px;
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 1fr 2fr; /* 1/3 para interruptor, 2/3 para análisis */
-    grid-template-rows: auto 1fr;
+    grid-template-columns: 1fr 2fr;
     gap: 40px;
     max-width: 1400px;
     margin: 0 auto;
 }
 
-/* El interruptor ocupa la columna de 1/3 */
 .columna-interruptor {
     grid-column: 1 / 2;
     display: flex;
@@ -71,7 +70,6 @@ button, input, textarea { font-family: inherit; }
     padding-top: 40px;
 }
 
-/* El análisis ocupa la columna de 2/3 */
 .columna-analisis {
     grid-column: 2 / 3;
     display: flex;
@@ -79,14 +77,13 @@ button, input, textarea { font-family: inherit; }
     gap: 20px;
 }
 
-/* Los resultados ocupan todo el ancho (abajo) */
+/* Resultados (dentro de la columna de análisis) */
 .seccion-resultados {
-    grid-column: 1 / -1;
     width: 100%;
     margin-top: 20px;
 }
 
-/* --- Componentes de las Vistas --- */
+/* --- Componentes --- */
 .vista-contenedor {
     width: 100%;
     display: flex;
@@ -97,7 +94,6 @@ button, input, textarea { font-family: inherit; }
 .vl-seccion-encabezado__titulo { font-size: 24px; margin-bottom: 6px; }
 .vl-seccion-encabezado__subtitulo { color: var(--texto-secundario); font-family: 'Inter', sans-serif; font-size: 14px; }
 
-/* --- Contenedor de Goma --- */
 .goma-caja {
     background: var(--fondo-goma);
     border-radius: var(--radio);
@@ -106,11 +102,11 @@ button, input, textarea { font-family: inherit; }
     transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 .caja-contenido { padding: 24px; flex-grow: 1; }
 .caja-pie { padding: 0 24px 24px 24px; }
 
-/* --- Botones de Goma --- */
 .goma-boton {
     display: inline-flex; align-items: center; justify-content: center;
     height: 48px; padding: 0 24px; border: none; border-radius: var(--radio);
@@ -121,7 +117,6 @@ button, input, textarea { font-family: inherit; }
 .goma-boton:hover { transform: translateY(-2px); }
 .goma-boton:active { transform: translateY(2px); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1), inset 0 3px 6px rgba(0, 0, 0, 0.1); }
 
-/* --- Textarea --- */
 .input-texto {
     width: 100%; height: 250px; padding: 16px; border-radius: 8px;
     border: 1px solid var(--borde-goma); font-family: monospace; resize: vertical;
@@ -129,7 +124,6 @@ button, input, textarea { font-family: inherit; }
     transition: background-color 0.5s ease, color 0.5s ease;
 }
 
-/* --- Zona de Carga (Carpeta) --- */
 .vl-docs-zona {
     border: 2px dashed var(--borde-goma); border-radius: var(--radio);
     background: var(--bg-pagina); padding: 50px 20px; text-align: center; cursor: pointer;
@@ -140,12 +134,11 @@ button, input, textarea { font-family: inherit; }
 .vl-docs-zona__texto { font-size: 16px; margin-bottom: 6px; }
 .vl-docs-zona__pista { font-size: 14px; color: var(--texto-secundario); font-family: 'Inter', sans-serif; }
 
-/* --- Tabla de Resultados --- */
+/* --- Tabla --- */
 .vl-admin-tabla-wrapper { width: 100%; overflow-x: auto; }
 .vl-admin-tabla { width: 100%; border-collapse: collapse; font-size: 14px; }
-.vl-admin-tabla thead { background: rgba(0,0,0,0.03); transition: background-color 0.5s ease; }
+.vl-admin-tabla thead { background: rgba(0,0,0,0.03); }
 body.modo-oscuro .vl-admin-tabla thead { background: rgba(255,255,255,0.03); }
-
 .vl-admin-tabla th { padding: 16px; text-align: left; font-weight: 700; text-transform: uppercase; font-size: 11px; border-bottom: 2px solid var(--borde-goma); }
 .vl-admin-tabla td { padding: 16px; border-bottom: 1px solid var(--borde-goma); color: var(--texto-secundario); }
 .vl-admin-tabla td:first-child { font-family: monospace; font-weight: bold; color: var(--texto-principal); }
@@ -160,7 +153,7 @@ body.modo-oscuro .SOSPECHOSO_IA { color: #ffd87a !important; }
 body.modo-oscuro .APROBADO_CON_OBSERVACIONES { color: #38bdf8 !important; }
 
 /* ============================================================
-   INTERRUPTOR (Se mantiene igual)
+   INTERRUPTOR
    ============================================================ */
 .int-contenedor-tema {
   display: flex; align-items: center; justify-content: center; background: transparent;
@@ -208,149 +201,34 @@ body.modo-oscuro .int-contenedor-tema {
 .int-perno { position: absolute; left: 50%; top: 50%; width: calc(var(--tamano) * 0.3); height: calc(var(--tamano) * 0.3); transform: translate(-50%, -50%); border-radius: 50%; background: var(--fondo-perno); box-shadow: var(--sombra-perno); transition: background 0.45s ease, box-shadow 0.45s ease; z-index: 3; }
 .int-perno::after { content: ""; position: absolute; left: 24%; top: 18%; width: 32%; height: 24%; border-radius: 50%; background: radial-gradient(circle, var(--brillo-perno), rgba(255, 255, 255, 0)); filter: blur(1px); transition: background 0.45s ease; }
 
-
-
-
-
 /* ============================================================
-   SECCIÓN DE INFORMACIÓN (¿Qué es SABDIAN?)
+   SECCIÓN DE INFORMACIÓN
    ============================================================ */
 .seccion-info {
-    grid-column: 1 / -1; /* Ocupa todo el ancho */
+    grid-column: 1 / -1;
     width: 100%;
     margin-top: 20px;
     margin-bottom: 20px;
 }
-
-.info-tarjeta {
-    padding: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-}
-
-.info-titulo {
-    font-size: 24px;
-    color: var(--texto-principal);
-    margin-bottom: 8px;
-    text-align: center;
-}
-
-.info-texto {
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    line-height: 1.6;
-    color: var(--texto-secundario);
-    text-align: center;
-    max-width: 800px;
-    margin: 0 auto 20px auto;
-}
-
-.info-texto strong {
-    color: var(--texto-principal);
-    font-weight: 600;
-}
-
-/* Contenedor de los pasos */
-.info-pasos {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 24px;
-    margin-top: 10px;
-}
-
-.paso {
-    display: flex;
-    align-items: flex-start;
-    gap: 16px;
-    background: var(--bg-pagina);
-    padding: 20px;
-    border-radius: var(--radio);
-    border: 1px solid var(--borde-goma);
-    transition: background-color 0.5s ease, border-color 0.5s ease;
-}
-
-.paso-numero {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: var(--texto-principal);
-    color: var(--bg-pagina);
-    font-weight: 800;
-    font-size: 16px;
-    font-family: 'Audiowide', sans-serif;
-}
-
-.paso-titulo {
-    font-size: 15px;
-    font-weight: 700;
-    color: var(--texto-principal);
-    margin-bottom: 4px;
-}
-
-.paso-texto {
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    line-height: 1.5;
-    color: var(--texto-secundario);
-}
-
-
-
+.info-tarjeta { padding: 30px; display: flex; flex-direction: column; gap: 20px; }
+.info-titulo { font-size: 24px; color: var(--texto-principal); margin-bottom: 8px; text-align: center; }
+.info-texto { font-family: 'Inter', sans-serif; font-size: 15px; line-height: 1.6; color: var(--texto-secundario); text-align: center; max-width: 800px; margin: 0 auto 20px auto; }
+.info-texto strong { color: var(--texto-principal); font-weight: 600; }
+.info-pasos { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-top: 10px; }
+.paso { display: flex; align-items: flex-start; gap: 16px; background: var(--bg-pagina); padding: 20px; border-radius: var(--radio); border: 1px solid var(--borde-goma); transition: background-color 0.5s ease, border-color 0.5s ease; }
+.paso-numero { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; flex-shrink: 0; border-radius: 50%; background: var(--texto-principal); color: var(--bg-pagina); font-weight: 800; font-size: 16px; font-family: 'Audiowide', sans-serif; }
+.paso-titulo { font-size: 15px; font-weight: 700; color: var(--texto-principal); margin-bottom: 4px; }
+.paso-texto { font-family: 'Inter', sans-serif; font-size: 13px; line-height: 1.5; color: var(--texto-secundario); }
 
 /* ============================================================
-   LISTA DE ARCHIVOS SELECCIONADOS
+   LISTA DE ARCHIVOS Y LOADER
    ============================================================ */
-.lista-archivos {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    width: 100%;
-    padding: 10px;
-    text-align: left;
-    max-height: 150px;
-    overflow-y: auto;
-}
+.lista-archivos { display: flex; flex-direction: column; gap: 8px; width: 100%; padding: 10px; text-align: left; max-height: 150px; overflow-y: auto; }
+.archivo-item { display: flex; align-items: center; gap: 8px; font-family: 'Inter', sans-serif; font-size: 13px; color: var(--texto-principal); background: var(--fondo-goma); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--borde-goma); }
+.archivo-item span { font-size: 16px; }
+.archivo-mas { color: var(--texto-secundario); font-style: italic; justify-content: center; border: 1px dashed var(--borde-goma); background: transparent; }
 
-.archivo-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-family: 'Inter', sans-serif;
-    font-size: 13px;
-    color: var(--texto-principal);
-    background: var(--fondo-goma);
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid var(--borde-goma);
-}
-
-.archivo-item span {
-    font-size: 16px;
-}
-
-.archivo-mas {
-    color: var(--texto-secundario);
-    font-style: italic;
-    justify-content: center;
-    border: 1px dashed var(--borde-goma);
-    background: transparent;
-}
-
-/* ============================================================
-   ANIMACIÓN DEL LOADER (Configuración del SVG)
-   ============================================================ */
-.main-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-}
+.main-container { display: flex; justify-content: center; align-items: center; height: 100%; width: 100%; }
 .loader { width: 100%; max-width: 400px; margin: 0 auto; }
 .trace-bg { stroke: var(--borde-goma); stroke-width: 1.8; fill: none; }
 .trace-flow { stroke-width: 1.8; fill: none; stroke-dasharray: 40 400; stroke-dashoffset: 438; filter: drop-shadow(0 0 6px currentColor); animation: flow 3s cubic-bezier(0.5, 0, 0.9, 1) infinite; }
@@ -361,77 +239,36 @@ body.modo-oscuro .int-contenedor-tema {
 .red { stroke: #ff3300; color: #ff3300; }
 @keyframes flow { to { stroke-dashoffset: 0; } }
 
-
-
 /* ============================================================
-   RESPONSIVO (Ajustes para Tablets y Móviles)
+   RESPONSIVO
    ============================================================ */
-
-/* Tablets (pantallas medianas) */
 @media (max-width: 900px) {
     .vl-pagina {
-        grid-template-columns: 1fr; /* Una sola columna */
+        grid-template-columns: 1fr;
         padding-top: 84px;
         gap: 20px;
     }
-    
     .columna-interruptor {
         grid-column: 1 / -1;
         padding-top: 0;
         margin-bottom: 10px;
     }
-    
     .columna-analisis {
         grid-column: 1 / -1;
     }
-    
     .vl-seccion-encabezado {
         text-align: center;
     }
 }
 
-/* Móviles (pantallas pequeñas) */
 @media (max-width: 600px) {
-    /* 1. Hacer el interruptor más pequeño para que no ocupe toda la pantalla */
-    .int-selector {
-        --tamano: 80px !important; 
-    }
+    .int-selector { --tamano: 80px !important; }
+    .int-escenario { flex-direction: column; gap: 15px; }
+    .int-etiqueta { font-size: 9px; letter-spacing: 0.05em; }
+    .vl-pagina { padding: 80px 16px 40px; }
+    .input-texto { height: 200px; font-size: 14px; }
+    .goma-boton { height: 40px; font-size: 13px; }
     
-    /* 2. Apilar el texto del interruptor arriba y abajo (en lugar de izquierda/derecha) */
-    .int-escenario {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    /* 3. Ajustar la tipografía de las etiquetas */
-    .int-etiqueta {
-        font-size: 9px;
-        letter-spacing: 0.05em;
-    }
-
-    /* 4. Ajustar el área de texto y la tabla para que no se corten */
-    .vl-pagina {
-        padding: 80px 16px 40px;
-    }
-
-    .input-texto {
-        height: 200px;
-        font-size: 14px;
-    }
-
-    .goma-boton {
-        height: 40px;
-        font-size: 13px;
-    }
-
-    /* Hacer que la tabla se pueda deslizar horizontalmente sin romper la pantalla */
-    .vl-admin-tabla-wrapper {
-        border-radius: var(--radio);
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .vl-admin-tabla {
-        min-width: 600px; /* Fuerza a que la tabla sea ancha y se pueda deslizar */
-    }
+    .vl-admin-tabla-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    .vl-admin-tabla { min-width: 600px; }
 }
