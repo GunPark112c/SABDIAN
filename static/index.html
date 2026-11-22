@@ -74,7 +74,6 @@
                                 <p class="vl-docs-zona__texto">Haz clic para <strong>seleccionar</strong> una carpeta</p>
                                 <p class="vl-docs-zona__pista">o arrastra y suelta aquí</p>
                             </div>
-                            <!-- Aquí se inyectará la lista de archivos -->
                             <div id="lista-archivos" class="lista-archivos" style="display: none;"></div>
                             <input type="file" id="input-carpeta" webkitdirectory directory multiple style="display: none;">
                         </div>
@@ -85,73 +84,59 @@
                 </div>
             </div>
 
-            <!-- ANIMACIÓN DE CARGA (Inicialmente oculta) -->
+            <!-- ANIMACIÓN DE CARGA (Oculta) -->
             <div id="loader-container" style="display: none; margin-top: 20px;">
                 <div class="main-container">
                     <div class="loader">
                         <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
                         <defs>
-                            <linearGradient id="chipGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#2d2d2d"></stop>
-                            <stop offset="100%" stop-color="#0f0f0f"></stop>
-                            </linearGradient>
-                            <linearGradient id="textGradient" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#eeeeee"></stop>
-                            <stop offset="100%" stop-color="#888888"></stop>
-                            </linearGradient>
-                            <linearGradient id="pinGradient" x1="1" y1="0" x2="0" y2="0">
-                            <stop offset="0%" stop-color="#bbbbbb"></stop>
-                            <stop offset="50%" stop-color="#888888"></stop>
-                            <stop offset="100%" stop-color="#555555"></stop>
-                            </linearGradient>
+                            <linearGradient id="chipGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2d2d2d"></stop><stop offset="100%" stop-color="#0f0f0f"></stop></linearGradient>
+                            <linearGradient id="textGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#eeeeee"></stop><stop offset="100%" stop-color="#888888"></stop></linearGradient>
+                            <linearGradient id="pinGradient" x1="1" y1="0" x2="0" y2="0"><stop offset="0%" stop-color="#bbbbbb"></stop><stop offset="50%" stop-color="#888888"></stop><stop offset="100%" stop-color="#555555"></stop></linearGradient>
                         </defs>
                         <g id="traces">
-                            <path d="M100 100 H200 V210 H326" class="trace-bg"></path>
-                            <path d="M100 100 H200 V210 H326" class="trace-flow purple"></path>
-                            <path d="M80 180 H180 V230 H326" class="trace-bg"></path>
-                            <path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
-                            <path d="M60 260 H150 V250 H326" class="trace-bg"></path>
-                            <path d="M60 260 H150 V250 H326" class="trace-flow yellow"></path>
-                            <path d="M100 350 H200 V270 H326" class="trace-bg"></path>
-                            <path d="M100 350 H200 V270 H326" class="trace-flow green"></path>
-                            <path d="M700 90 H560 V210 H474" class="trace-bg"></path>
-                            <path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
-                            <path d="M740 160 H580 V230 H474" class="trace-bg"></path>
-                            <path d="M740 160 H580 V230 H474" class="trace-flow green"></path>
-                            <path d="M720 250 H590 V250 H474" class="trace-bg"></path>
-                            <path d="M720 250 H590 V250 H474" class="trace-flow red"></path>
-                            <path d="M680 340 H570 V270 H474" class="trace-bg"></path>
-                            <path d="M680 340 H570 V270 H474" class="trace-flow yellow"></path>
+                            <path d="M100 100 H200 V210 H326" class="trace-bg"></path><path d="M100 100 H200 V210 H326" class="trace-flow purple"></path>
+                            <path d="M80 180 H180 V230 H326" class="trace-bg"></path><path d="M80 180 H180 V230 H326" class="trace-flow blue"></path>
+                            <path d="M60 260 H150 V250 H326" class="trace-bg"></path><path d="M60 260 H150 V250 H326" class="trace-flow yellow"></path>
+                            <path d="M100 350 H200 V270 H326" class="trace-bg"></path><path d="M100 350 H200 V270 H326" class="trace-flow green"></path>
+                            <path d="M700 90 H560 V210 H474" class="trace-bg"></path><path d="M700 90 H560 V210 H474" class="trace-flow blue"></path>
+                            <path d="M740 160 H580 V230 H474" class="trace-bg"></path><path d="M740 160 H580 V230 H474" class="trace-flow green"></path>
+                            <path d="M720 250 H590 V250 H474" class="trace-bg"></path><path d="M720 250 H590 V250 H474" class="trace-flow red"></path>
+                            <path d="M680 340 H570 V270 H474" class="trace-bg"></path><path d="M680 340 H570 V270 H474" class="trace-flow yellow"></path>
                         </g>
                         <rect x="330" y="190" width="140" height="100" rx="20" ry="20" fill="url(#chipGradient)" stroke="#222" stroke-width="3" filter="drop-shadow(0 0 6px rgba(0,0,0,0.8))"></rect>
-                        <g>
-                            <rect x="322" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                            <rect x="322" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                            <rect x="322" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                            <rect x="322" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                        </g>
-                        <g>
-                            <rect x="470" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                            <rect x="470" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                            <rect x="470" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                            <rect x="470" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect>
-                        </g>
+                        <g><rect x="322" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="322" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect></g>
+                        <g><rect x="470" y="205" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="470" y="225" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="470" y="245" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect><rect x="470" y="265" width="8" height="10" fill="url(#pinGradient)" rx="2"></rect></g>
                         <text x="400" y="240" font-family="Arial, sans-serif" font-size="22" fill="url(#textGradient)" text-anchor="middle" alignment-baseline="middle">Analizando</text>
-                        <circle cx="100" cy="100" r="5" fill="black"></circle>
-                        <circle cx="80" cy="180" r="5" fill="black"></circle>
-                        <circle cx="60" cy="260" r="5" fill="black"></circle>
-                        <circle cx="100" cy="350" r="5" fill="black"></circle>
-                        <circle cx="700" cy="90" r="5" fill="black"></circle>
-                        <circle cx="740" cy="160" r="5" fill="black"></circle>
-                        <circle cx="720" cy="250" r="5" fill="black"></circle>
-                        <circle cx="680" cy="340" r="5" fill="black"></circle>
+                        <circle cx="100" cy="100" r="5" fill="black"></circle><circle cx="80" cy="180" r="5" fill="black"></circle><circle cx="60" cy="260" r="5" fill="black"></circle><circle cx="100" cy="350" r="5" fill="black"></circle>
+                        <circle cx="700" cy="90" r="5" fill="black"></circle><circle cx="740" cy="160" r="5" fill="black"></circle><circle cx="720" cy="250" r="5" fill="black"></circle><circle cx="680" cy="340" r="5" fill="black"></circle>
                         </svg>
                     </div>
                 </div>
             </div>
+
+            <!-- RESULTADOS (AHORA ESTÁ AQUÍ ADENTRO) -->
+            <div id="resultados-container" class="seccion-resultados" style="display: none;">
+                <div class="vl-seccion-encabezado" style="margin-bottom: 20px;">
+                    <h3 class="vl-seccion-encabezado__titulo" style="font-size: 24px;">Resultados del Análisis</h3>
+                </div>
+                <div class="vl-admin-tabla-wrapper goma-caja">
+                    <table class="vl-admin-tabla" id="tabla-resultados">
+                        <thead>
+                            <tr>
+                                <th>Archivo / Bloque</th>
+                                <th>Veredicto</th>
+                                <th>Score IA</th>
+                                <th>Deuda Técnica</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
         </section>
 
-        <!-- SECCIÓN DE INFORMACIÓN -->
+        <!-- SECCIÓN DE INFORMACIÓN (Ocupa todo el ancho) -->
         <section class="seccion-info">
             <div class="info-tarjeta goma-caja">
                 <h2 class="info-titulo">SABDIAN</h2>
@@ -167,46 +152,17 @@
                 <div class="info-pasos">
                     <div class="paso">
                         <span class="paso-numero">1</span>
-                        <div>
-                            <h3 class="paso-titulo">Selecciona el Alcance</h3>
-                            <p class="paso-texto">Usa el interruptor para elegir entre auditar un <strong>bloque individual</strong> o realizar un barrido profundo a un <strong>proyecto completo</strong>.</p>
-                        </div>
+                        <div><h3 class="paso-titulo">Selecciona el Alcance</h3><p class="paso-texto">Usa el interruptor para elegir entre auditar un <strong>bloque individual</strong> o realizar un barrido profundo a un <strong>proyecto completo</strong>.</p></div>
                     </div>
                     <div class="paso">
                         <span class="paso-numero">2</span>
-                        <div>
-                            <h3 class="paso-titulo">Barrido Estático (Fase 1)</h3>
-                            <p class="paso-texto">El motor en Python analiza el código sin ejecutarlo. Evalúa la <strong>complejidad ciclomática</strong>, <strong>duplicación</strong>, <strong>entropía de nombres</strong> y detecta malas prácticas.</p>
-                        </div>
+                        <div><h3 class="paso-titulo">Barrido Estático (Fase 1)</h3><p class="paso-texto">El motor en Python analiza el código sin ejecutarlo. Evalúa la <strong>complejidad ciclomática</strong>, <strong>duplicación</strong>, <strong>entropía de nombres</strong> y detecta malas prácticas.</p></div>
                     </div>
                     <div class="paso">
                         <span class="paso-numero">3</span>
-                        <div>
-                            <h3 class="paso-titulo">Evaluación Neuronal (Fase 2)</h3>
-                            <p class="paso-texto">Los resultados del barrido se envían a la IA, que evalúa la <strong>semántica del código</strong>, la coherencia arquitectónica y emite el veredicto de <strong>Deuda Técnica</strong>.</p>
-                        </div>
+                        <div><h3 class="paso-titulo">Evaluación Neuronal (Fase 2)</h3><p class="paso-texto">Los resultados del barrido se envían a la IA, que evalúa la <strong>semántica del código</strong>, la coherencia arquitectónica y emite el veredicto de <strong>Deuda Técnica</strong>.</p></div>
                     </div>
                 </div>
-            </div>
-        </section>
-
-        <!-- RESULTADOS -->
-        <section id="resultados-container" class="seccion-resultados" style="display: none;">
-            <div class="vl-seccion-encabezado" style="margin-bottom: 20px;">
-                <h3 class="vl-seccion-encabezado__titulo" style="font-size: 24px;">Resultados del Análisis</h3>
-            </div>
-            <div class="vl-admin-tabla-wrapper goma-caja">
-                <table class="vl-admin-tabla" id="tabla-resultados">
-                    <thead>
-                        <tr>
-                            <th>Archivo / Bloque</th>
-                            <th>Veredicto</th>
-                            <th>Score IA</th>
-                            <th>Deuda Técnica</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
             </div>
         </section>
     </main>
