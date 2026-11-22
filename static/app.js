@@ -116,58 +116,58 @@ function mostrarDetalleHallazgos(res) {
     const filas = [
         {
             metrica: "Líneas totales",
-            valor: obtenerValor(res, ["lineas", "estructura.lineas", "metricas.lineas", "estatico.lineas"]),
+            valor: obtenerValor(res, ["estatica.lineas_totales"]),
             significado: "Cantidad total de líneas del archivo o bloque; ayuda a dimensionar su extensión y modularidad."
         },
         {
             metrica: "Funciones",
-            valor: obtenerValor(res, ["funciones", "estructura.funciones", "metricas.funciones", "estatico.funciones"]),
-            significado: "Número de funciones o métodos detectados en el código."
+            valor: obtenerValor(res, ["estatica.num_funciones"]),
+            significado: "Número de funciones o bloques detectados en el código."
         },
         {
             metrica: "Complejidad alta",
-            valor: obtenerValor(res, ["complejidad_alta", "complejidad", "estructura.complejidad_alta", "metricas.complejidad_alta"]),
-            significado: "Bloques con muchas ramas o condiciones que suelen ser más difíciles de probar y mantener."
+            valor: obtenerValor(res, ["estatica.complejidad_alta"]),
+            significado: "Funciones con complejidad ciclomática superior al umbral definido, más difíciles de probar y mantener."
         },
         {
             metrica: "Sin docstring",
-            valor: obtenerValor(res, ["sin_docstring", "higiene.sin_docstring", "metricas.sin_docstring"]),
-            significado: "Funciones o clases sin documentación que explique su propósito, parámetros o retorno."
+            valor: obtenerValor(res, ["estatica.funciones_sin_docstring"]),
+            significado: "Funciones sin docstring que explique su propósito, parámetros o retorno."
         },
         {
             metrica: "Sin type hints",
-            valor: obtenerValor(res, ["sin_type_hints", "sin_hints", "higiene.sin_type_hints", "metricas.sin_type_hints"]),
-            significado: "Parámetros o retornos sin anotaciones de tipo, reduciendo claridad y validación estática."
+            valor: obtenerValor(res, ["estatica.funciones_sin_typehints"]),
+            significado: "Funciones sin anotaciones de tipo completas en parámetros o retorno."
         },
         {
             metrica: "except: pass",
-            valor: obtenerValor(res, ["except_pass", "higiene.except_pass", "metricas.except_pass"]),
-            significado: "Bloques que atrapan errores y los ignoran en silencio, ocultando fallos reales."
+            valor: obtenerValor(res, ["estatica.except_pass"]),
+            significado: "Bloques except que solo contienen pass, ocultando errores en silencio."
         },
         {
             metrica: "Score IA",
-            valor: res.score_ia !== undefined ? `${res.score_ia}/100` : obtenerValor(res, ["ia.score", "score"]),
-            significado: "Nivel estimado de patrones asociados a código generado por IA según el análisis."
+            valor: res.score_ia !== undefined ? `${res.score_ia}/100` : "—",
+            significado: "Puntaje heurístico (0 a 100) basado en entropía, burstiness, nombres y patrones del código."
         },
         {
             metrica: "Entropía",
-            valor: obtenerValor(res, ["entropia", "ia.entropia", "metricas.entropia"]),
-            significado: "Mide qué tan variada o predecible es la distribución de tokens y caracteres."
+            valor: obtenerValor(res, ["textura.entropia_nombres"]),
+            significado: "Entropía de Shannon de los nombres/identificadores; valores bajos indican repetición o poca variedad."
         },
         {
             metrica: "Burstiness",
-            valor: obtenerValor(res, ["burstiness", "ia.burstiness", "metricas.burstiness"]),
-            significado: "Mide la variación entre estructuras cortas y largas; el código humano tiende a ser más irregular."
+            valor: obtenerValor(res, ["textura.burstiness"]),
+            significado: "Desviación estándar de la longitud de líneas; valores bajos reflejan líneas de extensión muy uniforme."
         },
         {
             metrica: "Deuda técnica (LLM)",
-            valor: obtenerValor(res, ["semantica.deuda_tecnica", "deuda_tecnica"]),
-            significado: "Nivel de esfuerzo futuro necesario por atajos, acoplamiento o diseño mejorable."
+            valor: obtenerValor(res, ["semantica.deuda_tecnica"]),
+            significado: "Evaluación semántica del modelo sobre mantenibilidad, claridad y posibles atajos de diseño."
         },
         {
             metrica: "Razones / Observaciones",
-            valor: obtenerValor(res, ["semantica.observaciones", "observaciones", "razones"]),
-            significado: "Notas puntuales del análisis estático o del LLM sobre calidad, estilo o posibles riesgos."
+            valor: obtenerValor(res, ["razones", "semantica.observaciones"]),
+            significado: "Motivos del veredicto y observaciones puntuales detectadas durante el análisis."
         }
     ];
 
