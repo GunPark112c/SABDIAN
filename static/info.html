@@ -14,7 +14,26 @@
     <header class="vl-cabecera">
         <div class="vl-cabecera__logo">SABDIAN</div>
         <div class="texto-analizador">Sistema Analítico de Barrido y Detección por IA Neuronal</div>
+
         <div class="vl-cabecera__acciones">
+            <div class="tema-switch" title="Cambiar modo oscuro">
+                <span class="tema-switch__etiqueta">Oscuro</span>
+                <div class="toggle-container">
+                    <input id="switch-modo-oscuro" class="toggle-input" type="checkbox" aria-label="Activar modo oscuro">
+                    <div class="toggle-handle-wrapper">
+                        <div class="toggle-handle">
+                            <div class="toggle-handle-knob"></div>
+                            <div class="toggle-handle-bar-wrapper">
+                                <div class="toggle-handle-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="toggle-base">
+                        <div class="toggle-base-inside"></div>
+                    </div>
+                </div>
+            </div>
+
             <a href="index.html" class="goma-boton boton-cabecera">Volver al Analizador</a>
         </div>
     </header>
@@ -130,6 +149,32 @@
             </div>
         </section>
     </main>
+
+    <script>
+        (function () {
+            const checkbox = document.getElementById("switch-modo-oscuro");
+            if (!checkbox) return;
+
+            const STORAGE_KEY = "sabdian_modo_oscuro";
+
+            function aplicarTema(oscuro) {
+                document.body.classList.toggle("modo-oscuro", oscuro);
+                checkbox.checked = oscuro;
+            }
+
+            const guardado = localStorage.getItem(STORAGE_KEY);
+            if (guardado !== null) {
+                aplicarTema(guardado === "true");
+            } else if (window.matchMedia) {
+                aplicarTema(window.matchMedia("(prefers-color-scheme: dark)").matches);
+            }
+
+            checkbox.addEventListener("change", function () {
+                aplicarTema(checkbox.checked);
+                localStorage.setItem(STORAGE_KEY, String(checkbox.checked));
+            });
+        })();
+    </script>
 
 </body>
 </html>
