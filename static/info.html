@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SABDIAN — Información y Tecnologías</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="info.css">
+</head>
+<body>
+
+    <header class="vl-cabecera">
+        <div class="vl-cabecera__logo">SABDIAN</div>
+        <div class="texto-analizador">Sistema Analítico de Barrido y Detección por IA Neuronal</div>
+        <div class="vl-cabecera__acciones">
+            <a href="index.html" class="goma-boton boton-cabecera">Volver al Analizador</a>
+        </div>
+    </header>
+
+    <main class="vl-pagina">
+        <section class="vista-contenedor">
+            <div class="vl-seccion-encabezado">
+                <h1 class="vl-seccion-encabezado__titulo">¿Cómo funciona SABDIAN?</h1>
+                <p class="vl-seccion-encabezado__subtitulo">
+                    Arquitectura, flujo de análisis y herramientas utilizadas en el proyecto.
+                </p>
+            </div>
+
+            <div class="goma-caja">
+                <div class="caja-contenido">
+                    <p class="info-resumen">
+                        <strong>SABDIAN</strong> evalúa fragmentos de código o carpetas completas de proyectos
+                        combinando métricas estructurales con análisis semántico mediante inteligencia artificial,
+                        generando un veredicto claro y una tabla detallada de hallazgos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="vl-seccion-encabezado seccion-espaciada">
+                <h2 class="vl-seccion-encabezado__titulo">Tecnologías empleadas</h2>
+                <p class="vl-seccion-encabezado__subtitulo">
+                    Función de cada herramienta dentro de la plataforma.
+                </p>
+            </div>
+
+            <div class="info-pasos">
+                <article class="goma-caja paso">
+                    <div class="paso-numero">01</div>
+                    <div class="paso-cuerpo">
+                        <h3 class="paso-titulo">Python &amp; FastAPI</h3>
+                        <p class="paso-texto">
+                            Lenguaje principal y framework del backend. Se encargan de recibir las solicitudes de análisis
+                            (tanto de código individual como de carpetas de proyecto), exponer las rutas de la API y
+                            coordinar el flujo con el módulo analizador.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="goma-caja paso">
+                    <div class="paso-numero">02</div>
+                    <div class="paso-cuerpo">
+                        <h3 class="paso-titulo">Uvicorn</h3>
+                        <p class="paso-texto">
+                            Es el servidor ASGI que ejecuta la aplicación FastAPI, mantiene el servicio escuchando
+                            peticiones HTTP y entrega los archivos del frontend tanto en entorno local como en el
+                            despliegue en la nube.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="goma-caja paso">
+                    <div class="paso-numero">03</div>
+                    <div class="paso-cuerpo">
+                        <h3 class="paso-titulo">Pydantic</h3>
+                        <p class="paso-texto">
+                            Se usa para validar y estructurar los datos que entran a la API (como el bloque de código
+                            o el conjunto de archivos de una carpeta), asegurando que cumplan el formato esperado antes
+                            de procesarlos.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="goma-caja paso">
+                    <div class="paso-numero">04</div>
+                    <div class="paso-cuerpo">
+                        <h3 class="paso-titulo">Groq</h3>
+                        <p class="paso-texto">
+                            Es el motor de inferencia de IA que realiza la evaluación semántica del código para detectar
+                            señales o patrones asociados a código generado por inteligencia artificial, complementando
+                            el análisis del proyecto.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="goma-caja paso">
+                    <div class="paso-numero">05</div>
+                    <div class="paso-cuerpo">
+                        <h3 class="paso-titulo">Google Generative AI</h3>
+                        <p class="paso-texto">
+                            SDK de modelos generativos de Google presente en las dependencias del proyecto como
+                            alternativa o respaldo para análisis con IA, mientras el flujo principal corre con Groq.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="goma-caja paso">
+                    <div class="paso-numero">06</div>
+                    <div class="paso-cuerpo">
+                        <h3 class="paso-titulo">HTML, CSS y JavaScript</h3>
+                        <p class="paso-texto">
+                            Conforman la interfaz web con estilo neumórfico (usando tipografías Audiowide e Inter), el
+                            interruptor animado, la carga de código o carpetas y la presentación de resultados y
+                            hallazgos en tablas.
+                        </p>
+                    </div>
+                </article>
+
+                <article class="goma-caja paso">
+                    <div class="paso-numero">07</div>
+                    <div class="paso-cuerpo">
+                        <h3 class="paso-titulo">GitHub y Render</h3>
+                        <p class="paso-texto">
+                            GitHub guarda el código fuente y el historial de versiones del repositorio, mientras Render
+                            compila las dependencias y despliega la aplicación web en línea.
+                        </p>
+                    </div>
+                </article>
+            </div>
+        </section>
+    </main>
+
+</body>
+</html>
